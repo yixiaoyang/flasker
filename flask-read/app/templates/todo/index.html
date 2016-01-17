@@ -1,0 +1,46 @@
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/todo.css') }}">
+{% endblock %}
+
+{% block title%}
+Todos Index
+{% endblock %}
+
+{% block content %}
+
+<div class="form_add">
+    {% include 'todo/new_form.html' %}
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+             <td>Content</td>
+             <td>Time</td>
+             <td>Status</td>
+             <td></td>
+       </tr>
+    </thead>
+    <tbody>
+    {% for t in todos %}
+        <tr>
+            <td>{{ t.content }}</td>
+            <td>{{ t.time }}</td>
+            <td>{{ t.status }}</td>
+            <td>
+                <!-- <form action="{{url_for('main.todos_del',id=t.id)}}" method="delete" if-match="q1w2e3r4t5">
+                  <input type="submit" class="link" value="Delete"/>
+                </form> -->
+            <a href="{{url_for('main.todos_del',id=t.id)}}" rel="nofollow">Destroy</a>
+            </td>
+       </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p>all todos count: {{ todos_count }}</p>
+
+{% endblock %}
