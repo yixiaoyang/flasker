@@ -1,0 +1,43 @@
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+{% endblock %}
+
+{% block title%}
+客户信息修改
+{% endblock %}
+
+{% block content %}
+
+<div class="form">
+<div>
+<form method="POST" action="/customer/update/{{customer.id}}">
+    <!-- <input type="text" value="{{customer.id}}" name="id" style="display: none;"> -->
+    <div class="col_input"><input type="text" value="{{customer.name}}" name="name" placeholder="姓名"></div>
+    <div class="col_input"><input type="text" value="{{customer.address}}" name="address" placeholder="地址"></div>
+    <div class="col_input"><input type="text" value="{{customer.email}}" name="email" placeholder="email"></div>
+    <div class="col_input"><input type="text" value="{{customer.tel}}" name="tel" placeholder="电话"></div>
+    <div class="col_input"><input type="text" value="{{customer.mobile}}" name="mobile" placeholder="手机"></div>
+    <div class="col_input"><input type="text" value="{{customer.qq}}" name="qq" placeholder="QQ"></div>
+
+    <div class="col_input">
+      <select class="col_input" value="{{customer.company_id}}" name="company" placeholder="所属公司" style="margin: 0 0 1rem 0;">
+        <option value="">--</option>
+        {% for company in companies %}
+        {% if company.id == customer.company_id:%}
+          <option value="{{company.id}}" selected="selected">{{company.name}}</option>
+        {% else:%}
+          <option value="{{company.id}}">{{company.name}}</option>
+        {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col_input"><input type="text" value="{{customer.position}}" name="position" placeholder="职位"></div>
+    <div class="col_input"><input type="text" value="{{customer.note}}" name="note" placeholder="备注"></div>
+
+    <div style="max-width:100px;"> <input value="更新" type="submit" class="button postfix"></div>
+</form>
+</div>
+</div>
+{% endblock %}

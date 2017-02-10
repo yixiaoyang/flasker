@@ -1,0 +1,37 @@
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+{% endblock %}
+
+{% block title%}
+New Customer
+{% endblock %}
+
+{% block content %}
+<div class="form">
+<div>
+<form method="POST" action="/customer/new/">
+    <div class="col_input"><input type="text" name="name" placeholder="姓名"></div>
+    <div class="col_input"><input type="text" name="address" placeholder="地址"></div>
+    <div class="col_input"><input type="text" name="email" placeholder="email"></div>
+    <div class="col_input"><input type="text" name="tel" placeholder="电话"></div>
+    <div class="col_input"><input type="text" name="mobile" placeholder="手机"></div>
+    <div class="col_input"><input type="text" name="qq" placeholder="QQ"></div>
+
+    <div class="col_input">
+      <select class="col_input" name="company" placeholder="所属公司" style="margin: 0 0 1rem 0;">
+        <option value="">--</option>
+        {% for company in companies %}
+        <option value="{{company.id}}">{{company.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col_input"><input type="text" name="position" placeholder="职位"></div>
+    <div class="col_input"><input type="text" name="note" placeholder="备注"></div>
+
+    <div style="max-width:100px;"> <input value="新建" type="submit" class="button postfix"></div>
+</form>
+</div>
+</div>
+{% endblock %}

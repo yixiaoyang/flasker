@@ -1,0 +1,39 @@
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+{% endblock %}
+
+{% block title%}
+产品列表
+{% endblock %}
+
+{% block content %}
+
+<div class="form">
+    {% include 'product/new_form.html' %}
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>产品名</td>
+            <td>描述</td>
+            <td></td>
+       </tr>
+    </thead>
+    <tbody>
+    {% for t in products %}
+        <tr>
+            <td><a href="{{url_for('main.product_show', id=t.id)}}">{{ t.name }}</a></td>
+            <td>{{ t.description }}</td>
+            <td>
+            <a href="{{url_for('main.product_remove',id=t.id)}}" rel="nofollow">删除</a>
+            </td>
+       </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p>计数: {{ products_count }}</p>
+
+{% endblock %}

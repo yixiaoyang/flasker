@@ -1,0 +1,64 @@
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+{% endblock %}
+
+{% block title%}
+产品详情
+{% endblock %}
+
+{% block content %}
+
+{% if product: %}
+
+<h3>产品详情</h3>
+<table class="table">
+    <thead>
+        <tr>
+          <td>产品名</td>
+          <td>描述</td>
+             <td></td>
+       </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>
+          <a href="{{url_for('main.product_remove',id=product.id)}}" rel="nofollow">删除</a>
+          </td>
+     </tr>
+    </tbody>
+</table>
+
+<h3>销售列表</h3>
+<table class="table">
+    <thead>
+        <tr>
+          <td>姓名</td>
+          <td>地址</td>
+          <td>email</td>
+          <td>电话</td>
+          <td>手机</td>
+          <td>QQ</td>
+          <td>职位</td>
+       </tr>
+    </thead>
+    <tbody>
+      {% block sell_records %}
+      <tr>
+        <td>姓名</td>
+        <td>地址</td>
+        <td>email</td>
+        <td>电话</td>
+        <td>手机</td>
+        <td>QQ</td>
+        <td>职位</td>
+     </tr>
+     {% endblock %}
+    </tbody>
+</table>
+
+{% endif %}
+
+{% endblock %}

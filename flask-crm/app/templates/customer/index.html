@@ -1,0 +1,52 @@
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+{% endblock %}
+
+{% block title%}
+客户列表
+{% endblock %}
+
+{% block content %}
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>姓名</td>
+            <td>地址</td>
+            <td>email</td>
+            <td>电话</td>
+            <td>手机</td>
+            <td>QQ</td>
+            <td>公司</td>
+            <td>职位</td>
+            <td>备注</td>
+            <td></td>
+       </tr>
+    </thead>
+    <tbody>
+    {% for t in customers %}
+        <tr>
+
+            <td><a href="{{url_for('main.customer_show', id=t.id)}}">{{ t.name }}</a></td>
+            <td>{{ t.address }}</td>
+            <td>{{ t.email }}</td>
+            <td>{{ t.tel }}</td>
+            <td>{{ t.mobile }}</td>
+            <td>{{ t.qq }}</td>
+            <td><a href="{{url_for('main.company_show', id=t.my_company.id)}}">{{ t.my_company.name }}</a></td>
+            <td>{{ t.position }}</td>
+            <td>{{ t.note }}</td>
+            <td>
+            <a href="{{url_for('main.customer_remove',id=t.id)}}" rel="nofollow">删除</a>
+            </td>
+       </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p>计数: {{ customers_count }}</p>
+<div><a href="{{url_for('main.customer_new')}}" rel="nofollow">新建</a><div>
+
+{% endblock %}

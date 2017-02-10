@@ -1,0 +1,41 @@
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+{% endblock %}
+
+{% block title%}
+Companies Index
+{% endblock %}
+
+{% block content %}
+
+<div class="form">
+    {% include 'company/new_form.html' %}
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>公司名称</td>
+            <td>地址</td>
+            <td>经营范围</td>
+            <td></td>
+       </tr>
+    </thead>
+    <tbody>
+    {% for t in companies %}
+        <tr>
+            <td><a href="{{url_for('main.company_show', id=t.id)}}">{{ t.name }}</a></td>
+            <td>{{ t.address }}</td>
+            <td>{{ t.business }}</td>
+            <td>
+            <a href="{{url_for('main.company_remove',id=t.id)}}" rel="nofollow">删除</a>
+            </td>
+       </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p>计数: {{ companies_count }}</p>
+
+{% endblock %}

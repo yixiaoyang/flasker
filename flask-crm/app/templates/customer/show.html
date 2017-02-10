@@ -1,0 +1,50 @@
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+{% endblock %}
+
+{% block title%}
+Todos Show
+{% endblock %}
+
+{% block content %}
+
+{% if customer: %}
+
+<table class="table">
+    <thead>
+        <tr>
+          <td>姓名</td>
+          <td>地址</td>
+          <td>email</td>
+          <td>电话</td>
+          <td>手机</td>
+          <td>QQ</td>
+          <td>公司</td>
+          <td>职位</td>
+          <td>备注</td>
+          <td></td>
+       </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ customer.name }}</td>
+        <td>{{ customer.address }}</td>
+        <td>{{ customer.email }}</td>
+        <td>{{ customer.tel }}</td>
+        <td>{{ customer.mobile }}</td>
+        <td>{{ customer.qq }}</td>
+        <td>{{ customer.my_company.name }}</td>
+        <td>{{ customer.position }}</td>
+        <td>{{ customer.note }}</td>
+          <td>
+          <a href="{{url_for('main.customer_remove',id=customer.id)}}" rel="nofollow">删除</a>
+          <a href="{{url_for('main.customer_update',id=customer.id)}}" rel="nofollow">更新</a>
+          </td>
+     </tr>
+    </tbody>
+</table>
+
+{% endif %}
+
+{% endblock %}

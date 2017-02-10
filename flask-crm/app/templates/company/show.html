@@ -1,0 +1,68 @@
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+{% endblock %}
+
+{% block title%}
+Todos Show
+{% endblock %}
+
+{% block content %}
+
+{% if company: %}
+
+<h3>公司简介</h3>
+<table class="table">
+    <thead>
+        <tr>
+             <td>公司名称</td>
+             <td>地址</td>
+             <td>经营范围</td>
+             <td></td>
+       </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td>{{ company.name }}</td>
+          <td>{{ company.address }}</td>
+          <td>{{ company.business }}</td>
+          <td>
+          <a href="{{url_for('main.company_remove',id=company.id)}}" rel="nofollow">Remove</a>
+          </td>
+     </tr>
+    </tbody>
+</table>
+
+<h3>员工列表</h3>
+<table class="table">
+    <thead>
+        <tr>
+          <td>姓名</td>
+          <td>地址</td>
+          <td>email</td>
+          <td>电话</td>
+          <td>手机</td>
+          <td>QQ</td>
+          <td>职位</td>
+       </tr>
+    </thead>
+    <tbody>
+      {% block employees %}
+      {% for t in company.employees %}
+      <tr>
+        <td><a href="{{url_for('main.customer_show', id=t.id)}}">{{ t.name }}</a></td>
+        <td>{{ t.address }}</td>
+        <td>{{ t.email }}</td>
+        <td>{{ t.tel }}</td>
+        <td>{{ t.mobile }}</td>
+        <td>{{ t.qq }}</td>
+        <td>{{ t.position }}</td>
+     </tr>
+     {% endfor %}
+     {% endblock %}
+    </tbody>
+</table>
+
+{% endif %}
+
+{% endblock %}

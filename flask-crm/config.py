@@ -14,7 +14,6 @@ class Config:
 	def init_app(app):
 		pass
 
-
 class DevConfig(Config):
 	DEBUG = True
 	SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
@@ -27,8 +26,8 @@ class ProConfig(Config):
 	SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 config = {
-'development': DevConfig,
-'test': TestConfig,
-'production': ProConfig,
-'default': DevConfig
+    'development': DevConfig,
+    'test': TestConfig,
+    'production': ProConfig,
+    'default': DevConfig
 }

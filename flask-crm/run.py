@@ -1,15 +1,25 @@
-import os 
+import os
 
 from app import create_app, db
 from app.models import User,Todo
 
 from flask import url_for
-from flask.ext.script import Manager,Shell
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.migrate import Migrate, MigrateCommand
-from flask.ext.scss import Scss
+from flask_script import Manager,Shell
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate, MigrateCommand
+from flask_scss import Scss
+
+import logging
+from logging.handlers import RotatingFileHandler
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+
+# logging
+log_handler = RotatingFileHandler('run.log', maxBytes=10240, backupCount=1)
+log_handler.setLevel(logging.INFO)
+app.logger.addHandler(log_handler)
+
+print("create app succeed")
 
 # initialization for componet
 manager = Manager(app)
@@ -37,7 +47,7 @@ def list_routes():
         url = url_for(rule.endpoint, **options)
         line = urllib.unquote("{:32s} {:32s} {}".format(rule.endpoint, methods, url))
         output.append(line)
-    
+
     for line in sorted(output):
         print line
 
