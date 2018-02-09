@@ -4,36 +4,46 @@
 {% endblock %}
 
 {% block title%}
-客户列表
+联系人列表
 {% endblock %}
 
 {% block content %}
+<script type="text/javascript">
+addCss("{{ url_for('static', filename = 'css/customer.css') }}");
+</script>
 
 
-<table class="table">
+<div class="button-group">
+  <a class="button small" data-toggle="cd-new-form">新建联系人资料</a>
+</div>
+<div id="cd-new-form" class="reveal" title="新建联系人资料" data-reveal data-overlay="false" data-close-on-click="false">
+    <button class="close-button" data-close aria-label="Close reveal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {% include 'customer/new_form.html' %}
+</div>
+
+<table class="table hover stack">
     <thead>
         <tr>
             <td>姓名</td>
             <td>地址</td>
             <td>email</td>
             <td>电话</td>
-            <td>手机</td>
             <td>QQ</td>
             <td>公司</td>
             <td>职位</td>
-            <td>备注</td>
+            <td width="300px">备注</td>
             <td></td>
        </tr>
     </thead>
     <tbody>
     {% for t in customers %}
         <tr>
-
             <td><a href="{{url_for('main.customer_show', id=t.id)}}">{{ t.name }}</a></td>
-            <td>{{ t.address }}</td>
+            <td>{{ t.address or t.my_company.address }}</td>
             <td>{{ t.email }}</td>
-            <td>{{ t.tel }}</td>
-            <td>{{ t.mobile }}</td>
+            <td>{{ t.mobile or t.tel }}</td>
             <td>{{ t.qq }}</td>
             <td><a href="{{url_for('main.company_show', id=t.my_company.id)}}">{{ t.my_company.name }}</a></td>
             <td>{{ t.position }}</td>
@@ -47,6 +57,4 @@
 </table>
 
 <p>计数: {{ customers_count }}</p>
-<div><a href="{{url_for('main.customer_new')}}" rel="nofollow">新建</a><div>
-
 {% endblock %}

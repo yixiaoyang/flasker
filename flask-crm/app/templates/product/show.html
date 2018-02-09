@@ -35,26 +35,24 @@
 <table class="table">
     <thead>
         <tr>
-          <td>姓名</td>
-          <td>地址</td>
-          <td>email</td>
-          <td>电话</td>
-          <td>手机</td>
-          <td>QQ</td>
-          <td>职位</td>
+          <td>产品名</td>
+          <td>客户名</td>
+          <td>价格</td>
+          <td>串行码</td>
+          <td>时间</td>
        </tr>
     </thead>
     <tbody>
       {% block sell_records %}
+      {% for record in product.sell_records %}
       <tr>
-        <td>姓名</td>
-        <td>地址</td>
-        <td>email</td>
-        <td>电话</td>
-        <td>手机</td>
-        <td>QQ</td>
-        <td>职位</td>
+        <td>{{product.name}}</td>
+        <td>{{record.customer.name}}</td>
+        <td>{{record.price}}</td>
+        <td>{{record.serial}}</td>
+        <td>{{record.date}}</td>
      </tr>
+     {% endfor %}
      {% endblock %}
     </tbody>
 </table>

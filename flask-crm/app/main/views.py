@@ -1,3 +1,6 @@
+#-*- coding:utf-8 -*-
+
+import logging
 from datetime import datetime
 from flask import render_template, session, redirect, url_for, escape, request, flash, abort
 from ..models import *
@@ -5,12 +8,18 @@ from . import main
 from .. import db
 from run import app
 
-from flask_login import login_required,login_user
+# forms
+from .forms  import LoginForm, RegisterForm
+
+from flask_login import login_required, login_user, logout_user, current_user, login_required
+
+
 
 #from ..models import User
 #from .froms import NameForm
 
 @main.route('/',methods=['get', 'post'])
+@login_required
 def index():
     return render_template('index.html')
 
@@ -18,6 +27,7 @@ def index():
 # Todo
 #####################################################################
 @main.route('/todo/',methods=['get', 'post'])
+@login_required
 def todos():
     error = None
     if request.method == 'POST':
@@ -29,13 +39,14 @@ def todos():
             db.session.add(todo)
             db.session.commit()
             print todo
-            flash('You were successfully inssert new todo',"success")
+            flash('You were successfully inssert new todo','success')
     todos = Todo.query.all()
     todos_count = Todo.query.count()
     return render_template('todo/index.html', todos=todos,todos_count=todos_count)
 
 # test:curl -i http://localhost:5000/todo/1/ -X DELETE
 @main.route('/todo/<id>/',methods=['get','post', 'delete'])
+@login_required
 def todos_show(id):
     print('method = %s' % request)
     if request.method == 'GET':
@@ -48,6 +59,7 @@ def todos_show(id):
         return redirect(url_for('main.todos'))
 
 @main.route('/todo/del/<id>',methods=['get','post','delete'])
+@login_required
 def todos_del(id):
     #id = request.form['id']
     print('id=%s' % id)
@@ -64,16 +76,56 @@ def todos_del(id):
 #####################################################################
 @main.route('/user/login/', methods=['post','get'])
 def login():
-    print('method = %s' % request)
-    if request.method == 'GET':
-       return '<h1>hello, iam goiing to login[GET]</h1>'
-    else:
-        return '<h1>hello, iam goiing to login[POST]</h1>'
+    '''
+    [GET]:  display the login form
+    [POST]: login the current user by processing the form
+    '''
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+
+    form = LoginForm(request.form)
+    form.title = '登录系统'
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        #user = User(form.username.data, form.password.data)
+        if user:
+            if user.verify_password(form.password.data):
+                login_user(user)
+                flash('登录成功','success')
+                print("User %s %s login user succeed" % (user.username,current_user.username))
+                return redirect(url_for('main.index'))
+            else:
+                flash('用户名或者密码错误','error')
+                return render_template("user/login.html", form=form)
+    return render_template("user/login.html",  form=form)
+
+@main.route('/user/logout/')
+@login_required
+def logout():
+    logout_user()
+    flash('您已注销登录')
+    form = LoginForm(request.form)
+    form.title = '登录系统'
+    return render_template("user/login.html",  form=form)
+
+@main.route('/user/register/', methods=['post','get'])
+def register():
+    form = RegisterForm(request.form)
+    form.title = '注册'
+    if form.validate_on_submit():
+        user = User(form.username.data, form.password.data, form.email.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('注册成功，请在邮箱中查找确认链接进行验证')
+        return render_template('index.html')
+    return render_template("user/register.html",  form=form)
+
 
 #####################################################################
 # Company
 #####################################################################
 @main.route('/company/', methods=['get','post'])
+@login_required
 def companies():
     error = None
     if request.method == 'POST':
@@ -83,13 +135,14 @@ def companies():
         company.business = request.form['business'] or ''
         db.session.add(company)
         db.session.commit()
-        flash('You were successfully inssert new company',"success")
+        flash('创建成功','success')
         return redirect(url_for('main.companies'))
     companies = Company.query.all()
     companies_count = Company.query.count()
     return render_template('company/index.html', companies=companies, companies_count=companies_count)
 
 @main.route('/company/remove/<id>',methods=['get','post','delete'])
+@login_required
 def company_remove(id):
     company = Company.query.filter_by(id=id).first()
     if company is None:
@@ -99,10 +152,13 @@ def company_remove(id):
     return redirect(url_for('main.companies'))
 
 @main.route('/company/show/<id>',methods=['get'])
+@login_required
 def company_show(id):
     company = Company.query.filter_by(id=id).first()
     if company is None:
         abort(404)
+    print(company)
+    print("name:%s"%company.name)
     return render_template('company/show.html', company=company)
 
 
@@ -110,13 +166,17 @@ def company_show(id):
 # Customer
 #####################################################################
 @main.route('/customer/', methods=['get','post'])
+@login_required
 def customers():
     error = None
     customers = Customer.query.all()
-    customers_count = Customer.query.count()
-    return render_template('customer/index.html', customers=customers, customers_count=customers_count)
+    companies = Company.query.all()
+    customers_count = len(customers)
+    logging.debug("all companies count:%d"%len(companies))
+    return render_template('customer/index.html', customers=customers, companies=companies, customers_count=customers_count)
 
 @main.route('/customer/remove/<id>',methods=['get','post','delete'])
+@login_required
 def customer_remove(id):
     customer = Customer.query.filter_by(id=id).first()
     if customer is None:
@@ -126,6 +186,7 @@ def customer_remove(id):
     return redirect(url_for('main.customers'))
 
 @main.route('/customer/show/<id>',methods=['get'])
+@login_required
 def customer_show(id):
     customer = Customer.query.filter_by(id=id).first()
     if customer is None:
@@ -133,6 +194,7 @@ def customer_show(id):
     return render_template('customer/show.html', customer=customer)
 
 @main.route('/customer/new/',methods=['get','post'])
+@login_required
 def customer_new():
     error = None
     if request.method == 'POST':
@@ -155,15 +217,18 @@ def customer_new():
 
         db.session.add(customer)
         db.session.commit()
-        flash('You were successfully inssert new customer',"success")
-        return redirect(url_for('main.customer_show',id=customer.id))
+        flash('创建成功','success')
+        return redirect(url_for('main.customers'))
+        #return redirect(url_for('main.customer_show',id=customer.id))
     elif  request.method == 'GET':
         app.logger.info("customer_new get done")
         companies = Company.query.all()
+        logging.debug("all companies count:%d"%len(companies))
         return render_template('customer/new_form.html', companies=companies)
 
 
 @main.route('/customer/update/<id>',methods=['get','post'])
+@login_required
 def customer_update(id):
     error = None
     customer = None
@@ -184,7 +249,7 @@ def customer_update(id):
 
         db.session.add(customer)
         db.session.commit()
-        flash('You were successfully inssert new customer',"success")
+        flash('创建成功','success')
         return redirect(url_for('main.customer_show',id=customer.id))
     elif  request.method == 'GET':
         customer = Customer.query.filter_by(id=id).first()
@@ -196,6 +261,7 @@ def customer_update(id):
 # Product
 #####################################################################
 @main.route('/product/', methods=['get','post'])
+@login_required
 def products():
     error = None
     if request.method == 'POST':
@@ -204,13 +270,14 @@ def products():
         product.description = request.form['description'] or ''
         db.session.add(product)
         db.session.commit()
-        flash('You were successfully inssert new product',"success")
+        flash('创建成功','success')
         return redirect(url_for('main.products'))
     products = Product.query.all()
     products_count = Product.query.count()
     return render_template('product/index.html', products=products, products_count=products_count)
 
 @main.route('/product/remove/<id>',methods=['get','post','delete'])
+@login_required
 def product_remove(id):
     product = Product.query.filter_by(id=id).first()
     if product is None:
@@ -220,8 +287,75 @@ def product_remove(id):
     return redirect(url_for('main.products'))
 
 @main.route('/product/show/<id>',methods=['get'])
+@login_required
 def product_show(id):
     product = Product.query.filter_by(id=id).first()
     if product is None:
         abort(404)
     return render_template('product/show.html', product=product)
+
+
+
+#####################################################################
+# SellRecord
+#####################################################################
+@main.route('/sell_record/', methods=['get','post'])
+@login_required
+def sell_records():
+    records = SellRecord.query.all()
+    records_count = SellRecord.query.count()
+    return render_template('sell_record/index.html', records=records, sell_records_count=records_count)
+
+@main.route('/sell_record/remove/<id>',methods=['get','post','delete'])
+@login_required
+def sell_record_remove(id):
+    record = SellRecord.query.filter_by(id=id).first()
+    if record is None:
+        abort(404)
+    db.session.delete(record)
+    db.session.commit()
+    return redirect(url_for('main.sell_records'))
+
+@main.route('/sell_record/show/<id>',methods=['get'])
+@login_required
+def sell_record_show(id):
+    record = SellRecord.query.filter_by(id=id).first()
+    if record is None:
+        abort(404)
+    return render_template('sell_record/show.html', record=record)
+
+@main.route('/sell_record/new/',methods=['get','post'])
+@login_required
+def sell_record_new():
+    error = None
+    app.logger.info("request.method=%s"%request.method)
+    if request.method == 'POST':
+        sell_record = SellRecord()
+        customer_id = request.form['customer'] or ''
+        product_id = request.form['product'] or ''
+        app.logger.info("customer.id, product.id=%s/%s"%(customer_id, product_id))
+        if customer_id:
+            customer = Customer.query.filter_by(id=customer_id).first()
+            if customer:
+                sell_record.customer_id = customer.id
+            else:
+                abort(500)
+        if product_id:
+            product = Product.query.filter_by(id=product_id).first()
+            if product:
+                sell_record.product_id = product.id
+            else:
+                abort(500)
+
+        sell_record.price = float(request.form['price']) or 0.0
+        sell_record.serial = request.form['serial'] or ''
+        sell_record.note = request.form['note'] or ''
+        sell_record.date = datetime.strptime(request.form['date'] or '', "%Y-%m-%d %H:%M:%S")
+        db.session.add(sell_record)
+        db.session.commit()
+        flash('成功新建销售记录','success')
+        return redirect(url_for('main.sell_record_show',id=sell_record.id))
+    elif  request.method == 'GET':
+        customers = Customer.query.all()
+        products = Product.query.all()
+        return render_template('sell_record/new_form.html', products=products, customers=customers)

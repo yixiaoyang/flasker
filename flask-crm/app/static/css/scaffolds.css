@@ -142,18 +142,18 @@ blockquote {
     .alert {
       background-color: #FFDBDC; }
 
-      .flash {
-        background-color: #FFDBDC; }
-        .flash ul {
-          list-style-type: none;
-          padding-top: 10px;
-          padding-bottom: 10px; }
+      .flashes {
+        list-style-type: none;
+        margin-left: 0rem; }
 
-table {
-  width: 100%; }
+        .flash {
+          background-color: #EEE; }
 
-  .fullw {
-    width: 100%;
-    min-width: 100%;
-    margin-left: 0px;
-    margin-right: 0px; }
+          table {
+            width: 100%; }
+
+            .fullw {
+              width: 100%;
+              min-width: 100%;
+              margin-left: 0px;
+              margin-right: 0px; }

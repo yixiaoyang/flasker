@@ -8,8 +8,12 @@
 {% endblock %}
 
 {% block content %}
+<script type="text/javascript">
+addCss("{{ url_for('static', filename = 'css/product.css') }}");
+</script>
 
-<div class="form">
+<button type="button" class="button small" data-reveal-id="cd-new-form">新建记录</button>
+<div id="cd-new-form" class="reveal-modal" title="新建记录" data-reveal>
     {% include 'product/new_form.html' %}
 </div>
 
@@ -35,5 +39,6 @@
 </table>
 
 <p>计数: {{ products_count }}</p>
+
 
 {% endblock %}

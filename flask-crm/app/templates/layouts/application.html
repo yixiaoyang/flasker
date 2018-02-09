@@ -6,23 +6,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="stylesheet" href="{{ url_for('static', filename = 'css/foundation.min.css') }}">
       <link rel="stylesheet" href="{{ url_for('static', filename = 'css/normalize.css') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename = 'css/jquery-ui.min.css') }}">
 
-      <link rel="stylesheet" href="{{ url_for('static', filename = 'css/user.css') }}">
+      <script src="{{ url_for('static', filename = 'js/vendor/modernizr.js') }}"></script>
+
+      <script src="{{ url_for('static', filename = 'js/vendor/jquery.min.js') }}"></script>
+      <script src="{{ url_for('static', filename = 'js/vendor/jquery-ui.min.js') }}"></script>
+
+      <script src="{{ url_for('static', filename = 'js/foundation.min.js') }}"></script>
+      <script src="{{ url_for('static', filename = 'js/jquery.cxcalendar.min.js') }}"></script>
+      <script src="{{ url_for('static', filename = 'js/jquery.cxcalendar.languages.js') }}"></script>
+      <script src="{{ url_for('static', filename = 'js/custom_ux.js') }}"></script>
+
+      <link rel="stylesheet" href="{{ url_for('static', filename = 'css/jquery.cxcalendar.css') }}">
 
       <!-- This is how you would link your custom stylesheet -->
       <link rel="stylesheet" href="{{ url_for('static', filename = 'css/scaffolds.css') }}">
       <link rel="stylesheet" href="{{ url_for('static', filename = 'css/foundation_and_overrides.css') }}">
-      <script src="{{ url_for('static', filename = 'js/vendor/modernizr.js') }}"></script>
+      <link rel="stylesheet" href="{{ url_for('static', filename = 'css/user.css') }}">
 
-      <script src="{{ url_for('static', filename = 'js/vendor/jquery.js') }}"></script>
-      <script src="{{ url_for('static', filename = 'js/foundation.min.js') }}"></script>
-
-
-      <!--WARNING: Make js import error:{{ moment.include_jquery() }}-->
-      {{ moment.include_moment() }}
 
       {% block custom_css %}
       {% endblock %}
+
+
+    <script type="text/javascript">
+    function addCss(filename){
+      var head = document.head;
+      var link = document.createElement("link");
+      link.type = "text/css";
+      link.rel = "stylesheet";
+      link.href = filename;
+      head.appendChild(link);
+    }
+    </script>
+
     <title> {% block title%} {%endblock%} </title>
   </head>
 
@@ -34,26 +52,32 @@
       </header>
 
       <section class="content-wrapper">
-        <!-- <div class="sidebar">
-          {% block sidebar %}
-          {% endblock %}
-        </div> -->
-
         <div class="content">
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-              <div class="flash">
-              <ul class="none">
-              {% for message in messages %}
-                <li class="none">{{ message }}</li>
-              {% endfor %}
-              </ul>
+            <div class="row">
+              <!--<div class="medium-2 columns sidebar_left">
+                  {% include 'layouts/_sidebar.html'%}
               </div>
-            {% endif %}
-            {% endwith %}
+              <div class="medium-10 columns main_content">
+              -->
+              <div class="columns main_content">
+                  {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    <ul class="flashes">
+                    {% for category, message in messages %}
+                    <li class="">
+                        <div class="flash callout {{ category }}">
+                            {{ message }}
+                        </div>
+                    </li>
+                    {% endfor %}
+                    </ul>
+                  {% endif %}
+                  {% endwith %}
 
-        	{% block content %}
-        	{% endblock %}
+              	{% block content %}
+              	{% endblock %}
+              </div>
+            </div>
         </div>
       </section>
     </div>

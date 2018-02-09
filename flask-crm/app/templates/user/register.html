@@ -1,0 +1,34 @@
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/user.css') }}">
+{% endblock %}
+
+{% block title%}
+Login
+{% endblock %}
+
+{% block content %}
+<div class="medium-4 small-centered columns dialog-frame">
+  <div class="login-box">
+    <h5>{{ form.title }}</h5>
+    {% from "_formhelpers.html" import render_field %}
+    <form method="POST" action="{{url_for('main.register')}}">
+        {{ form.csrf_token }}
+        {{ render_field(form.username) }}
+        {{ render_field(form.email) }}
+        {{ render_field(form.password) }}
+        {{ render_field(form.confirm) }}
+
+
+        <!--<div class="">
+            <input type="text" name="username" placeholder="Username" />
+            <input type="password" name="password" placeholder="Password" />
+        </div>-->
+        <input type="submit" class="button small primary" value="Regiuster"/>
+        <a class="button small secondary" href="{{url_for('main.login')}}">Sign in</a>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

@@ -12,6 +12,11 @@ from flask_scss import Scss
 import logging
 from logging.handlers import RotatingFileHandler
 
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
 # logging

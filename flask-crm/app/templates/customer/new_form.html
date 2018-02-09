@@ -1,15 +1,5 @@
-{% extends "layouts/application.html"%}
-
-{% block custom_css %}
-{% endblock %}
-
-{% block title%}
-New Customer
-{% endblock %}
-
-{% block content %}
 <div class="form">
-<div>
+<h4 class="form-title">新建联系人资料</h4>
 <form method="POST" action="/customer/new/">
     <div class="col_input"><input type="text" name="name" placeholder="姓名"></div>
     <div class="col_input"><input type="text" name="address" placeholder="地址"></div>
@@ -33,5 +23,3 @@ New Customer
     <div style="max-width:100px;"> <input value="新建" type="submit" class="button postfix"></div>
 </form>
 </div>
-</div>
-{% endblock %}

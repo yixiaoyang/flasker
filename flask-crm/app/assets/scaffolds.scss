@@ -86,7 +86,7 @@ div {
   min-height: 90%;
   min-width: 900px;
   /* equal to footer height */
-  padding-right: 10px; 
+  padding-right: 10px;
 }
 
 .content-wrapper{
@@ -98,7 +98,7 @@ div {
 }
 
 .alert .alert-notice{
-  padding-left:$ContentPaddingWD;  
+  padding-left:$ContentPaddingWD;
 }
 
 .content {
@@ -184,13 +184,15 @@ blockquote {
     background-color: #FFDBDC;
 }
 
+.flashes{
+  list-style-type: none;
+  /*padding-top: 10px;
+  padding-bottom:10px;*/
+  margin-left: 0rem;
+}
+
 .flash{
-  background-color: #FFDBDC;
-  ul{
-    list-style-type: none;
-    padding-top: 10px;
-    padding-bottom:10px;
-  }
+    background-color: #EEE;
 }
 
 table{
@@ -201,5 +203,5 @@ table{
     width:100%;
     min-width: 100%;
     margin-left: 0px;
-    margin-right: 0px;   
+    margin-right: 0px;
 }

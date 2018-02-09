@@ -9,17 +9,27 @@ Companies Index
 
 {% block content %}
 
-<div class="form">
+<script type="text/javascript">
+addCss("{{ url_for('static', filename = 'css/company.css') }}");
+</script>
+
+<div class="button-group">
+  <a class="button small" data-toggle="cd-new-form">新建公司资料</a>
+</div>
+<div id="cd-new-form" class="reveal" title="新建公司资料" data-reveal data-overlay="false" data-close-on-click="false">
+    <button class="close-button" data-close aria-label="Close reveal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
     {% include 'company/new_form.html' %}
 </div>
 
-<table class="table">
+<table class="table hover stack">
     <thead>
         <tr>
-            <td>公司名称</td>
+            <td width="300">公司名称</td>
             <td>地址</td>
             <td>经营范围</td>
-            <td></td>
+            <td width="60"></td>
        </tr>
     </thead>
     <tbody>

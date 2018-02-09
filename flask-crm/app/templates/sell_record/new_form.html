@@ -1,0 +1,40 @@
+<div class="form">
+<h3>新建销售记录</h3>
+<form method="POST" action="/sell_record/new/">
+    <div class="col_input">
+      <select class="col_input" name="product" placeholder="产品" style="margin: 0 0 1rem 0;">
+        {% for product in products %}
+        <option value="{{product.id}}">所售产品：{{product.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col_input">
+      <select class="col_input" name="customer" placeholder="客户" style="margin: 0 0 1rem 0;">
+        {% for customer in customers %}
+        <option value="{{customer.id}}">客户名称：{{customer.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col_input"><input type="text" name="price" placeholder="价格"></div>
+    <div class="col_input"><input type="text" name="serial" placeholder="串行码"></div>
+
+    <label for="date_a">选择日期：</label>
+    <div class="col_input">
+      <input type="text" readonly="" size="22" name="date" class="input" id="date">
+    </div>
+
+    <div class="col_input">
+      <textarea rows="5" cols="100" type="text" name="note" placeholder="备注"></textarea>
+    </div>
+    <div style="max-width:100px;"> <input value="新建" type="submit" class="button postfix"></div>
+</form>
+
+<script>
+$('#date').cxCalendar({
+  type: 'datetime',
+  format: 'YYYY-MM-DD HH:mm:ss'
+});
+</script>
+
+</div>

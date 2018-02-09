@@ -1,0 +1,46 @@
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+{% endblock %}
+
+{% block title%}
+销售列表
+{% endblock %}
+
+{% block content %}
+
+<button type="button" class="button small" data-reveal-id="cd-new-form">新建记录</button>
+<div id="cd-new-form" class="reveal-modal" title="新建记录" data-reveal>
+    {% include 'sell_record/new_form.html' %}
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>产品名</td>
+            <td>客户名</td>
+            <td>价格</td>
+            <td>串行码</td>
+            <td>时间</td>
+            <td></td>
+       </tr>
+    </thead>
+    <tbody>
+    {% for t in records %}
+        <tr>
+            <td><a href="{{url_for('main.product_show', id=t.product.id)}}">{{ t.product.name }}</a></td>
+            <td><a href="{{url_for('main.customer_show', id=t.customer.id)}}">{{ t.customer.name }}</a></td>
+            <td>{{ t.price }}</td>
+            <td>{{ t.serial }}</td>
+            <td>{{ t.date }}</td>
+            <td>
+            <a href="{{url_for('main.sell_record_remove',id=t.id)}}" rel="nofollow">删除</a>
+            </td>
+       </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p>计数: {{ sell_records_count }}</p>
+
+{% endblock %}

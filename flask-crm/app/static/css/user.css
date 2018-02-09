@@ -2,9 +2,19 @@
   background: #fff;
   border: 1px solid #ddd;
   margin: 100px 0;
-  padding: 40px 20px 0 20px;
-}
+  padding: 40px 20px 0 20px; }
 
-select,textarea{
-  margin: 0 0 1rem 0;
-}
+  .top-bar input {
+    max-width: 200px;
+    margin-right: 1rem;
+    height: 1rem; }
+
+    .menu .menu-text {
+      padding: 0px; }
+
+      .dialog-frame {
+        padding-left: 30%;
+        padding-right: 30%; }
+
+        .form-title {
+          padding: 10px 0px 10px 0px; }
