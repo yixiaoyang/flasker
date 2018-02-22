@@ -2,16 +2,18 @@
 
 import logging
 from datetime import datetime
-from flask import render_template, session, redirect, url_for, escape, request, flash, abort
+from flask import render_template, session, redirect, url_for, escape, request
+from flask import flash, abort
 from ..models import *
 from . import main
 from .. import db
 from run import app
 
 # forms
-from .forms  import LoginForm, RegisterForm
+from .forms  import LoginForm, RegisterForm, NewMachineForm
 
-from flask_login import login_required, login_user, logout_user, current_user, login_required
+from flask_login import login_required, login_user, logout_user, current_user
+from flask_login import login_required
 
 
 
@@ -273,7 +275,7 @@ def products():
         flash('创建成功','success')
         return redirect(url_for('main.products'))
     products = Product.query.all()
-    products_count = Product.query.count()
+    products_count = len(products)
     return render_template('product/index.html', products=products, products_count=products_count)
 
 @main.route('/product/remove/<id>',methods=['get','post','delete'])
@@ -359,3 +361,66 @@ def sell_record_new():
         customers = Customer.query.all()
         products = Product.query.all()
         return render_template('sell_record/new_form.html', products=products, customers=customers)
+
+#####################################################################
+# Machines
+#####################################################################
+@main.route('/machine/', methods=['get','post'])
+@login_required
+def machines():
+    error = None
+
+    form = NewMachineForm(request.form)
+    products = Product.query.all()
+    form.product_id.choices = [(p.id, p.name) for p in products]
+
+    if request.method == 'POST':
+        print("machine post")
+        if form.validate():
+            machine = Machine(id=form.serial.data)
+            machine.hw_version = form.hw_version.data
+            machine.regulate_done = form.regulate_done.data
+            machine.regulate_on = form.regulate_on.data
+            machine.product_id = form.product_id.data
+            db.session.add(machine)
+            db.session.commit()
+            print("machine create done")
+            flash('创建成功','success')
+            return redirect(url_for('main.machines'))
+        else:
+            for err in form.errors:
+                print(err)
+                print(form.product_id.data)
+                print(type(form.product_id.data))
+        '''
+        machine = Machine()
+        machine.id = request.form['id']
+        machine.product_id = request.form['product_id']
+        db.session.add(machine)
+        db.session.commit()
+        flash('创建成功','success')
+        return redirect(url_for('main.machines'))
+        '''
+
+    machines = Machine.query.all()
+    machines_count = len(machines)
+    return render_template('machine/index.html', machines=machines,
+                            machines_count=machines_count, form=form)
+
+@main.route('/machine/remove/<id>',methods=['get','post','delete'])
+@login_required
+def machine_remove(id):
+    machine = Machine.query.filter_by(id=id).first()
+    if machine is None:
+        abort(404)
+    db.session.delete(machine)
+    db.session.commit()
+    return redirect(url_for('main.machines'))
+
+@main.route('/machine/show/<id>',methods=['get'])
+@login_required
+def machine_show(id):
+    machine = Machine.query.filter_by(id=id).first()
+    if machine is None:
+        abort(404)
+    return render_template('machine/show.html', machine=machine)

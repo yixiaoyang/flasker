@@ -75,6 +75,9 @@ class Todo(db.Model):
     def __repr__(self):
         return '<Todo %r>' % self.id
 
+'''
+公司信息类
+'''
 class Company(db.Model):
     __tablename__ = 'companies'
     id = db.Column(db.Integer, primary_key=True)
@@ -87,6 +90,9 @@ class Company(db.Model):
     def __repr__(self):
         return '<Company %r %r>' % (self.id, self.name)
 
+'''
+客户信息类
+'''
 class Customer(db.Model):
     __tablename__ = 'customers'
     id = db.Column(db.Integer, primary_key=True)
@@ -105,37 +111,100 @@ class Customer(db.Model):
     def __repr__(self):
         return '<Customer %r>' % self.name
 
-'''
-装配日期
-主板序号
-CPU序号
-软件版本
-软件期限
-AC版本
-DC版本
-出厂日期
-客户公司
-鼠键序号
-TF卡容量
-'''
 class ProductConfig(db.Model):
     __tablename__ = 'product_config'
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.Text())
 
+
+'''
+产品信息类
+'''
 class Product(db.Model):
     __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
     description = db.Column(db.Text())
     sell_records = db.relationship('SellRecord', backref='product')
+    machines = db.relationship('Machine', backref='product')
+
+'''
+机器记录
+一个销售纪录可能包含多台机器
+一个机器只有一个产品型号
+'''
+class Machine(db.Model):
+    __tablename__ = 'machine'
+
+    # 机器序号
+    id = db.Column(db.String(32), primary_key=True)
+
+    '''
+    关联外键
+    '''
+    # 外键到产品型号
+    product_id  = db.Column(db.Integer, db.ForeignKey('products.id'), default=0)
+
+    # 外键到销售记录条目
+    sell_record_id = db.Column(db.Integer, db.ForeignKey('sell_records.id'), index=True, default=0)
+
+    '''
+    机器配置
+    '''
+    # 主板版本
+    hw_version = db.Column(db.String(64))
+    # 软件版本
+    soft_version = db.Column(db.String(64))
+    # AC/DC FPGA版本
+    ac_version = db.Column(db.String(64))
+    dc_version = db.Column(db.String(64))
+    # 组装出厂时间
+    manufactured_on = db.Column('manufactured_on' , db.DateTime)
+    # license类型， 0:试用版，1:企业版
+    license = db.Column(db.Integer, default=0)
+    # 软件版本期限
+    license_to = db.Column('license_to' , db.DateTime)
+    # TF Card容量，单位G
+    tf_capacity = db.Column(db.Integer, default=8)
+    # 鼠标键盘
+    mouse_keyboard = db.Column(db.Boolean(), default=True)
+
+    '''
+    校准和检查记录
+    '''
+    # 检查AC电压
+    check_ac_volt = db.Column(db.Boolean(), default=False)
+    # 常规测试
+    check_normal_test = db.Column(db.Boolean(), default=False)
+    # 检查CV模式
+    check_cv = db.Column(db.Boolean(), default=False)
+    # 检查CR模式
+    check_cr = db.Column(db.Boolean(), default=False)
+    # 检查高压测试
+    check_hv = db.Column(db.Boolean(), default=False)
+    # 校准完毕
+    regulate_done = db.Column(db.Boolean(), default=False)
+    # 校准日期
+    regulate_on = db.Column('regulate_on' , db.DateTime)
+
+    def __init__(self, id=''):
+        self.id = id
+
 
 class Issue(db.Model):
     __tablename__ = 'issues'
     id = db.Column(db.Integer, primary_key=True)
+    # 外键到产品型号
+    product_id  = db.Column(db.Integer, db.ForeignKey('products.id'))
     title = db.Column(db.String(128))
     description = db.Column(db.Text())
     type = db.Column(db.Integer)
+    # 0：新建/opened
+    # 1：正在解决/working
+    # 2：正在测试/待反馈/testing
+    # 3：已解决/fixed
+    # 4：延后解决/pending
+    # 5：忽略/ignored
     status = db.Column(db.Integer)
 
 class IssueRecord(db.Model):
@@ -146,6 +215,9 @@ class IssueRecord(db.Model):
     create_time = db.Column(db.DateTime,default=datetime.now())
     readonly = db.Column(db.Boolean(),default=False)
 
+'''
+一条销售记录包含多台机器
+'''
 class SellRecord(db.Model):
     __tablename__ = 'sell_records'
     id = db.Column(db.Integer, primary_key=True)
@@ -156,6 +228,8 @@ class SellRecord(db.Model):
     serial = db.Column(db.String(64))
     date = db.Column(db.DateTime,default=datetime.now())
     note = db.Column(db.Text())
+
+    machines = db.relationship('Machine', backref='sell_record')
 
 class ServiceRecord(db.Model):
     __tablename__ = 'service_records'

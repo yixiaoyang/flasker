@@ -1,0 +1,39 @@
+
+{% extends "layouts/application.html"%}
+
+{% block custom_css %}
+{% endblock %}
+
+{% block title%}
+设备详情
+{% endblock %}
+
+{% block content %}
+
+{% if machine: %}
+
+<h3>公司简介</h3>
+<table class="table hover stack">
+    <thead>
+        <tr>
+            <td width="">编号</td>
+            <td width="100">设备类型</td>
+            <td width="80">状态</td>
+            <td width="60"></td>
+       </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td>{{ machine.id }}</td>
+          <td><a href="{{url_for('main.product_show', id=machine.product_id) if machine.product_id else '#'}}">{{ machine.product.name }}</a></td>
+          <td>{{ machine.license }}</td>
+          <td>
+          <a href="{{url_for('main.machine_remove',id=machine.id)}}" rel="nofollow">删除</a>
+          </td>
+     </tr>
+    </tbody>
+</table>
+
+{% endif %}
+
+{% endblock %}

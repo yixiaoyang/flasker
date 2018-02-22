@@ -1,0 +1,31 @@
+{% block NewMachineForm %}
+<div class="form">
+<h4 class="form-title">新建设备资料</h4>
+{% from "_formhelpers.html" import render_field %}
+<form method="POST" action="/machine/">
+    {{ form.csrf_token }}
+
+    {{render_field(form.serial)}}
+    {{render_field(form.product_id)}}
+    {{render_field(form.hw_version)}}
+    {{render_field(form.regulate_done)}}
+    {{render_field(form.license_type)}}
+
+
+    <div class="form_field_group">
+        <label for="regulate_on">{{ form.regulate_on.label }}</label>
+        <input type="text" readonly="" size="22" name="regulate_on" class="input" id="date">
+    </div>
+
+    <div style="max-width:200px;"> <input value="新建" type="submit" class="button small primary"></div>
+</form>
+
+<script type="text/javascript">
+$('#date').cxCalendar({
+  type: 'datetime',
+  format: 'YYYY-MM-DD HH:mm:ss'
+});
+</script>
+
+</div>
+{% endblock %}
