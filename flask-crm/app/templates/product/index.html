@@ -8,12 +8,14 @@
 {% endblock %}
 
 {% block content %}
-<script type="text/javascript">
-addCss("{{ url_for('static', filename = 'css/product.css') }}");
-</script>
 
-<button type="button" class="button small" data-reveal-id="cd-new-form">新建记录</button>
-<div id="cd-new-form" class="reveal-modal" title="新建记录" data-reveal>
+<div class="button-group">
+  <a class="button small" onclick="changeSubmitText(0)" data-toggle="cd-new-form">新建产品类型</a>
+</div>
+<div id="cd-new-form" class="reveal" title="新建机器资料" data-reveal data-overlay="false" data-close-on-click="false">
+    <button class="close-button" data-close aria-label="Close reveal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
     {% include 'product/new_form.html' %}
 </div>
 
@@ -22,6 +24,7 @@ addCss("{{ url_for('static', filename = 'css/product.css') }}");
         <tr>
             <td>产品名</td>
             <td>描述</td>
+            <td>状态</td>
             <td></td>
        </tr>
     </thead>
@@ -30,8 +33,10 @@ addCss("{{ url_for('static', filename = 'css/product.css') }}");
         <tr>
             <td><a href="{{url_for('main.product_show', id=t.id)}}">{{ t.name }}</a></td>
             <td>{{ t.description }}</td>
+            <td>{{ form.status.choices[t.status][1] }}</td>
             <td>
             <a href="{{url_for('main.product_remove',id=t.id)}}" rel="nofollow">删除</a>
+            <a id="modify_button" onclick="callAction('modify',{{t.id}})" rel="nofollow">修改</a>
             </td>
        </tr>
     {% endfor %}
@@ -39,6 +44,78 @@ addCss("{{ url_for('static', filename = 'css/product.css') }}");
 </table>
 
 <p>计数: {{ products_count }}</p>
+<p><textarea name="txtmessage" id="txtmessage" cols="80" rows="10"></textarea></p>
 
+<script type="text/javascript">
+function callAction(action,id){
+    var params = {};
+    params['action'] = action;
+    params['id'] = id;
+    params['test'] = 1;
+    switch(action){
+        case "modify":
+        break;
+        case "delete":
+        break;
+    }
+    $.ajax({
+        url:"{{url_for('main.product_edit')}}",
+        type: "post",
+        dataType: "json",
+        contentType: "application/json; charset=UTF-8",
+        accepts: {
+            json: 'application/json',
+        },
+        data: JSON.stringify(params),
+
+        success: function(data){
+            $("#txtmessage").text(JSON.stringify(data));
+            changeSubmitText(1);
+            $("#name").val(data.name);
+            $("#id").val(data.id);
+            $("#description").val(data.description);
+            setSelectByValue("status",data.status);
+            //$("#status option[value='$(data.status)']").attr("selected", true);
+            $("#id").val(data.id);
+            $("#cd-new-form").foundation("open");
+            console.log(data);
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+};
+
+/*
+ * 0:新建
+ * 1:修改
+ * 2:删除
+ */
+function changeSubmitText(mode){
+    switch(mode){
+        case 0:
+        $("#edit_form").attr("action","{{url_for('main.products')}}")
+        $("#confirm").val("新增");
+        break;
+        case 1:
+        $("#edit_form").attr("action","{{url_for('main.product_edit')}}")
+        $("#confirm").val("修改");
+        break;
+    }
+};
+
+function setSelectByValue(eID,val){
+    console.log("setSelectByValue:");
+    console.log(val);
+
+    var ele=document.getElementById(eID);
+    for(var ii=0; ii<ele.length; ii++)
+    if(ele.options[ii].value==val) { //Found!
+        ele.options[ii].selected=true;
+        return true;
+    }
+  return false;
+}
+</script>
 
 {% endblock %}

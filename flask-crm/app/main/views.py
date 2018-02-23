@@ -3,22 +3,17 @@
 import logging
 from datetime import datetime
 from flask import render_template, session, redirect, url_for, escape, request
-from flask import flash, abort
+from flask import flash, abort, jsonify, json
 from ..models import *
 from . import main
 from .. import db
 from run import app
 
 # forms
-from .forms  import LoginForm, RegisterForm, NewMachineForm
+from .forms  import LoginForm, RegisterForm, NewMachineForm, NewProductForm
 
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_login import login_required
-
-
-
-#from ..models import User
-#from .froms import NameForm
 
 @main.route('/',methods=['get', 'post'])
 @login_required
@@ -266,17 +261,20 @@ def customer_update(id):
 @login_required
 def products():
     error = None
+
+    form = NewProductForm(request.form)
     if request.method == 'POST':
         product = Product()
-        product.name = request.form['name'] or ''
-        product.description = request.form['description'] or ''
+        product.name = form.name.data
+        product.description = form.description.data
+        product.status = form.status.data
         db.session.add(product)
         db.session.commit()
         flash('创建成功','success')
         return redirect(url_for('main.products'))
     products = Product.query.all()
     products_count = len(products)
-    return render_template('product/index.html', products=products, products_count=products_count)
+    return render_template('product/index.html', products=products, products_count=products_count, form=form)
 
 @main.route('/product/remove/<id>',methods=['get','post','delete'])
 @login_required
@@ -296,6 +294,27 @@ def product_show(id):
         abort(404)
     return render_template('product/show.html', product=product)
 
+@main.route('/product/edit/',methods=['get','post'])
+@login_required
+def product_edit():
+    print("get in product_edit")
+    params = request.get_json()
+    if params:
+        id = params['id']
+        print( request.args)
+        print(id)
+        print(type(id))
+        form = NewProductForm(request.form)
+        product = Product.query.filter_by(id=id).first()
+        if product is None:
+            abort(404)
+        print(json.dumps(product))
+        form.description.data = product.description
+        form.status.data = product.status
+        form.name.data = product.name
+        return json.dumps(product)
+    else:
+        abort(404)
 
 
 #####################################################################
@@ -375,7 +394,6 @@ def machines():
     form.product_id.choices = [(p.id, p.name) for p in products]
 
     if request.method == 'POST':
-        print("machine post")
         if form.validate():
             machine = Machine(id=form.serial.data)
             machine.hw_version = form.hw_version.data
@@ -384,23 +402,12 @@ def machines():
             machine.product_id = form.product_id.data
             db.session.add(machine)
             db.session.commit()
-            print("machine create done")
             flash('创建成功','success')
             return redirect(url_for('main.machines'))
         else:
+            print("machine create error:")
             for err in form.errors:
-                print(err)
-                print(form.product_id.data)
-                print(type(form.product_id.data))
-        '''
-        machine = Machine()
-        machine.id = request.form['id']
-        machine.product_id = request.form['product_id']
-        db.session.add(machine)
-        db.session.commit()
-        flash('创建成功','success')
-        return redirect(url_for('main.machines'))
-        '''
+                print(err, form.product_id.data)
 
     machines = Machine.query.all()
     machines_count = len(machines)

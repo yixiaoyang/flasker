@@ -19,14 +19,8 @@ Login
         {{ render_field(form.email) }}
         {{ render_field(form.password) }}
         {{ render_field(form.confirm) }}
-
-
-        <!--<div class="">
-            <input type="text" name="username" placeholder="Username" />
-            <input type="password" name="password" placeholder="Password" />
-        </div>-->
-        <input type="submit" class="button small primary" value="Regiuster"/>
-        <a class="button small secondary" href="{{url_for('main.login')}}">Sign in</a>
+        <input type="submit" class="button small primary" value="注册"/>
+        <a class="button small secondary" href="{{url_for('main.login')}}">登录</a>
     </form>
   </div>
 </div>

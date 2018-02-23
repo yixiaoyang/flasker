@@ -1,9 +1,16 @@
+{% block NewProductForm %}
 <div class="form">
-<form method="POST" action="/product/">
-    <div class="col_input"><input type="text" name="name" placeholder="产品名"></div>
-    <div class="col_input">
-      <textarea rows="5" cols="100" type="text" name="description" placeholder="描述"></textarea>
+<h4 class="form-title">新建产品型号</h4>
+{% from "_formhelpers.html" import render_field %}
+<form id="edit_form" method="POST" action="/product/">
+    {{render_field(form.name)}}
+    {{render_field(form.description)}}
+    {{render_field(form.status)}}
+
+    <input id="edit_id" type="hidden" value="-1">
+    <div style="max-width:100px;">
+        <input id="confirm" value="新建" type="submit" class="button postfix">
     </div>
-    <div style="max-width:100px;"> <input value="新建" type="submit" class="button postfix"></div>
 </form>
 </div>
+{% endblock %}

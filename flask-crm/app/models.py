@@ -2,6 +2,7 @@
 
 from app import db
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.declarative import DeclarativeMeta
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import login_manager
@@ -124,9 +125,21 @@ class Product(db.Model):
     __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
+
+    status = db.Column(db.Integer())
     description = db.Column(db.Text())
     sell_records = db.relationship('SellRecord', backref='product')
     machines = db.relationship('Machine', backref='product')
+
+    @staticmethod
+    def statusStr(val):
+        choices=['未规划','规划中','研发中','完成研发']
+        if val > len(choices):
+            return ""
+        return choices[val]
+
+    def __json__(self):
+        return ['id', 'name', 'status', 'description']
 
 '''
 机器记录
@@ -134,7 +147,7 @@ class Product(db.Model):
 一个机器只有一个产品型号
 '''
 class Machine(db.Model):
-    __tablename__ = 'machine'
+    __tablename__ = 'machines'
 
     # 机器序号
     id = db.Column(db.String(32), primary_key=True)
@@ -147,6 +160,8 @@ class Machine(db.Model):
 
     # 外键到销售记录条目
     sell_record_id = db.Column(db.Integer, db.ForeignKey('sell_records.id'), index=True, default=0)
+
+    issues = db.relationship('Issue', backref='machine')
 
     '''
     机器配置
@@ -190,14 +205,37 @@ class Machine(db.Model):
     def __init__(self, id=''):
         self.id = id
 
+    @staticmethod
+    def licenseStr(val):
+        choices=['试用版','企业版','内部样机']
+        if val >= len(choices):
+            return ""
+        return choices[val]
+
+
+'''
+issue和machine是一对一关系
+'''
+Product_Issue_Relationship_Table = db.Table('product_issue',
+    db.Model.metadata,
+    db.Column('product_id', db.Integer, db.ForeignKey('products.id')),
+    db.Column('issue_id', db.Integer, db.ForeignKey('issues.id'))
+)
 
 class Issue(db.Model):
     __tablename__ = 'issues'
     id = db.Column(db.Integer, primary_key=True)
-    # 外键到产品型号
-    product_id  = db.Column(db.Integer, db.ForeignKey('products.id'))
+
+    # 关联到出问题的机器
+    machine_id = db.Column(db.String(32), db.ForeignKey('machines.id'))
+
+    # 关联到一系列产品
+    products = db.relationship('Product', secondary=Product_Issue_Relationship_Table,
+                               backref= 'issues')
+
     title = db.Column(db.String(128))
     description = db.Column(db.Text())
+    # 0：需求，1：反馈，2：功能问题，3：性能问题，4：其他
     type = db.Column(db.Integer)
     # 0：新建/opened
     # 1：正在解决/working
@@ -221,8 +259,8 @@ class IssueRecord(db.Model):
 class SellRecord(db.Model):
     __tablename__ = 'sell_records'
     id = db.Column(db.Integer, primary_key=True)
-    product_id  = db.Column(db.Integer,db.ForeignKey('products.id') ,  index=True)
-    customer_id = db.Column(db.Integer,db.ForeignKey('customers.id'),  index=True)
+    product_id  = db.Column(db.Integer, db.ForeignKey('products.id') ,  index=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'),  index=True)
     price = db.Column(db.Float, default=0.0)
     # 每个销售出去的机器有一个唯一编号
     serial = db.Column(db.String(64))

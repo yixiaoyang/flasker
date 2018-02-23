@@ -84,7 +84,7 @@ div {
   filter: none;
   width: 100% !important;
   min-height: 90%;
-  min-width: 900px;
+  min-width: 980px;
   /* equal to footer height */
   padding-right: 10px;
 }
@@ -93,7 +93,7 @@ div {
   width:80%;
   height:100%;
   background:#FFF;
-  min-height: 600px;
+  min-width: 980px;
   margin: 10px auto 0px;
 }
 
@@ -102,8 +102,7 @@ div {
 }
 
 .content {
-  width:80%;
-  margin: 0px auto 0px;
+  margin: 20px auto 20px;
 }
 
 

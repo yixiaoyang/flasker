@@ -15,15 +15,17 @@
 <table class="table hover stack">
     <thead>
         <tr>
-          <td>产品名</td>
-          <td>描述</td>
-             <td></td>
+            <td>产品名</td>
+            <td>描述</td>
+            <td>状态</td>
+            <td></td>
        </tr>
     </thead>
     <tbody>
       <tr>
           <td>{{ product.name }}</td>
           <td>{{ product.description }}</td>
+          <td>{{ product.statusStr(product.status) }}</td>
           <td>
           <a href="{{url_for('main.product_remove',id=product.id)}}" rel="nofollow">删除</a>
           </td>
@@ -31,6 +33,8 @@
     </tbody>
 </table>
 
+{% block sell_records %}
+{% if product.sell_records %}
 <h4>销售列表</h4>
 <table class="table hover stack">
     <thead>
@@ -43,7 +47,6 @@
        </tr>
     </thead>
     <tbody>
-      {% block sell_records %}
       {% for record in product.sell_records %}
       <tr>
         <td>{{product.name}}</td>
@@ -53,23 +56,24 @@
         <td>{{record.date}}</td>
      </tr>
      {% endfor %}
-     {% endblock %}
     </tbody>
 </table>
+{% endif %}
+{% endblock %}
 
-
+{% block machines %}
+{% if product.machines %}
 <h4>设备列表</h4>
 <table class="table hover stack">
     <thead>
         <tr>
             <td width="">编号</td>
-            <td width="100">设备类型</td>
+            <td width="200">设备型号</td>
             <td width="80">状态</td>
             <td width="60"></td>
        </tr>
     </thead>
     <tbody>
-    {% block machines %}
     {% for machine in product.machines %}
         <tr>
             <td><a href="{{url_for('main.machine_show', id=machine.id)}}">{{ machine.id }}</a></td>
@@ -80,9 +84,11 @@
             </td>
        </tr>
     {% endfor %}
-    {% endblock %}
     </tbody>
 </table>
+{% endif %}
+{% endblock %}
+
 {% endif %}
 
 {% endblock %}

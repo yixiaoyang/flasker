@@ -1,3 +1,5 @@
+#-*- coding:utf-8 -*-
+
 import os
 
 from app import create_app, db
@@ -23,8 +25,6 @@ app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 log_handler = RotatingFileHandler('run.log', maxBytes=10240, backupCount=1)
 log_handler.setLevel(logging.DEBUG)
 app.logger.addHandler(log_handler)
-
-print("create app succeed")
 
 # initialization for componet
 manager = Manager(app)
