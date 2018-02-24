@@ -15,10 +15,9 @@
 <table class="table hover stack">
     <thead>
         <tr>
-            <td>产品名</td>
+            <td width="150">产品名</td>
             <td>描述</td>
-            <td>状态</td>
-            <td></td>
+            <td width="80">状态</td>
        </tr>
     </thead>
     <tbody>
@@ -26,9 +25,6 @@
           <td>{{ product.name }}</td>
           <td>{{ product.description }}</td>
           <td>{{ product.statusStr(product.status) }}</td>
-          <td>
-          <a href="{{url_for('main.product_remove',id=product.id)}}" rel="nofollow">删除</a>
-          </td>
      </tr>
     </tbody>
 </table>

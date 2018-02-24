@@ -294,20 +294,18 @@ def product_show(id):
         abort(404)
     return render_template('product/show.html', product=product)
 
-@main.route('/product/edit/',methods=['get','post'])
+@main.route('/product/edit/',methods=['post'])
 @login_required
 def product_edit():
     print("get in product_edit")
     params = request.get_json()
     if params:
         id = params['id']
-        print( request.args)
-        print(id)
-        print(type(id))
         form = NewProductForm(request.form)
         product = Product.query.filter_by(id=id).first()
         if product is None:
             abort(404)
+        print(product)
         print(json.dumps(product))
         form.description.data = product.description
         form.status.data = product.status
@@ -316,6 +314,20 @@ def product_edit():
     else:
         abort(404)
 
+@main.route('/product/update/',methods=['post'])
+@login_required
+def product_update():
+    params = request.form
+    if params:
+        form = NewProductForm(params)
+        product = Product.query.filter_by(id=form.id.data).first()
+        if product:
+            product.status = form.status.data
+            product.name = form.name.data
+            product.description = form.description.data
+            db.session.commit()
+            print("update done")
+    return redirect(url_for('main.products'))
 
 #####################################################################
 # SellRecord
@@ -393,13 +405,28 @@ def machines():
     products = Product.query.all()
     form.product_id.choices = [(p.id, p.name) for p in products]
 
+    companies = Company.query.all()
+    form.company_id.choices = [(p.id, p.name) for p in companies]
+
     if request.method == 'POST':
         if form.validate():
-            machine = Machine(id=form.serial.data)
-            machine.hw_version = form.hw_version.data
-            machine.regulate_done = form.regulate_done.data
-            machine.regulate_on = form.regulate_on.data
-            machine.product_id = form.product_id.data
+            machine = Machine(id=form.id.data)
+
+            form.copy_to(machine)
+            #machine.product_id = form.product_id.data
+            #machine.status = form.status.data
+            #machine.hw_version = form.hw_version.data
+            #machine.regulate_done = form.regulate_done.data
+            #machine.regulate_on = form.regulate_on.data
+            #machine.license = form.license.data
+            #machine.tf_capacity = form.tf_capacity.data
+            #machine.mouse_keyboard = form.mouse_keyboard.data
+            #machine.check_ac_volt = form.check_ac_volt.data
+            #machine.check_normal_test = form.check_normal_test.data
+            #machine.check_cv = form.check_cv.data
+            #machine.check_hv = form.check_hv.data
+            #machine.check_cr = form.check_cr.data
+
             db.session.add(machine)
             db.session.commit()
             flash('创建成功','success')
@@ -431,3 +458,67 @@ def machine_show(id):
     if machine is None:
         abort(404)
     return render_template('machine/show.html', machine=machine)
+
+
+@main.route('/machine/edit/',methods=['post'])
+@login_required
+def machine_edit():
+    params = request.get_json()
+    if params:
+        print(params)
+
+        id = params['id']
+        form = NewMachineForm(request.form)
+        machine = Machine.query.filter_by(id=id).first()
+        if machine is None:
+            abort(404)
+
+        #print(machine.__json__())
+        #for name in machine.__json__():
+        #    value = getattr(machine,name)
+        #    print(name,value)
+
+        return json.dumps(machine)
+    else:
+        abort(404)
+
+@main.route('/machine/update/',methods=['post'])
+@login_required
+def machine_update():
+    params = request.form
+    if params:
+        print(params)
+        form = NewMachineForm(params)
+
+        old_id = form.old_id.data
+        new_id = form.id.data
+
+        if old_id and (old_id != new_id):
+            machine = Machine.query.filter_by(id=old_id).first()
+            if not machine:
+                abort(404)
+            machine.id = new_id
+        else:
+            machine = Machine.query.filter_by(id=form.id.data).first()
+            if not machine:
+                abort(404)
+
+        form.copy_to(machine)
+
+        #machine.product_id = form.product_id.data
+        #machine.status = form.status.data
+        #machine.hw_version = form.hw_version.data
+        #machine.regulate_done = form.regulate_done.data
+        #machine.regulate_on = form.regulate_on.data
+        #machine.license = form.license.data
+        #machine.tf_capacity = form.tf_capacity.data
+        #machine.mouse_keyboard = form.mouse_keyboard.data
+        #machine.check_ac_volt = form.check_ac_volt.data
+        #machine.check_normal_test = form.check_normal_test.data
+        #machine.check_cv = form.check_cv.data
+        #machine.check_hv = form.check_hv.data
+        #machine.check_cr = form.check_cr.data
+
+        db.session.commit()
+        print("update done")
+    return redirect(url_for('main.machines'))

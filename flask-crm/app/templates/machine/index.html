@@ -10,9 +10,9 @@
 {% block content %}
 
 <div class="button-group">
-  <a class="button small" data-toggle="cd-new-form">新建设备资料</a>
+  <a class="button small" data-toggle="cd-new-form" onclick="changeSubmitText(0)">新建设备资料</a>
 </div>
-<div id="cd-new-form" class="reveal" title="新建机器资料" data-reveal data-overlay="false" data-close-on-click="false">
+<div id="cd-new-form" class="reveal" title="新建设备资料" data-reveal data-overlay="false" data-close-on-click="false">
     <button class="close-button" data-close aria-label="Close reveal" type="button">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -22,10 +22,12 @@
 <table class="table hover stack">
     <thead>
         <tr>
-            <td width="">编号</td>
-            <td width="200">产品型号</td>
+            <td width="150">编号</td>
+            <td width="150">产品型号</td>
+            <td width="">客户</td>
+            <td width="80">License</td>
             <td width="80">状态</td>
-            <td width="60"></td>
+            <td width="80">编辑</td>
        </tr>
     </thead>
     <tbody>
@@ -33,9 +35,12 @@
         <tr>
             <td><a href="{{url_for('main.machine_show', id=t.id)}}">{{ t.id }}</a></td>
             <td><a href="{{url_for('main.product_show', id=t.product_id) if t.product_id else '#'}}">{{ t.product.name }}</a></td>
+            <td width="">{{t.company.name}}</td>
             <td>{{ t.licenseStr(t.license) }}</td>
+            <td width="80">{{ t.statusStr(t.status) }}</td>
             <td>
             <a href="{{url_for('main.machine_remove',id=t.id)}}" rel="nofollow">删除</a>
+            <a id="modify_button" onclick="callAction('modify','{{t.id}}')" rel="nofollow">修改</a>
             </td>
        </tr>
     {% endfor %}
@@ -43,5 +48,85 @@
 </table>
 
 <p>计数: {{ machines_count }}</p>
+<p><textarea name="txtmessage" id="txtmessage" cols="80" rows="10"></textarea></p>
+
+<script type="text/javascript">
+function callAction(action,id){
+    var params = {};
+    params['action'] = action;
+    params['id'] = id;
+    console.log(params);
+    $.ajax({
+        url:"{{url_for('main.machine_edit')}}",
+        type: "post",
+        dataType: "json",
+        contentType: "application/json; charset=UTF-8",
+        accepts: {
+            json: 'application/json',
+        },
+        data: JSON.stringify(params),
+
+        success: function(data){
+            console.log("ajax success:");
+            console.log(data);
+
+            $("#txtmessage").text(JSON.stringify(data));
+            changeSubmitText(1);
+
+            $("#id").val(data.id);
+            $("#old_id").val(data.id);
+            setSelectByValue("product_id",data.product_id);
+            setSelectByValue("status",data.status);
+            $("#hw_version").val(data.hw_version);
+            $("#regulate_done").prop("checked", data.regulate_done);
+            $("#date").val(data.date);
+            $("#regulate_on").val(data.regulate_on);
+            $("#manufactured_on").val(data.manufactured_on);
+            $("#tf_capacity").val(data.tf_capacity);
+            $("#check_ac_volt").prop("checked", data.check_ac_volt);
+            $("#check_normal_test").prop("checked", data.check_normal_test);
+            $("#check_cv").prop("checked", data.check_cv);
+            $("#check_cr").prop("checked", data.check_cr);
+            $("#check_hv").prop("checked", data.check_hv);
+            $("#mouse_keyboard").prop("checked", data.mouse_keyboard);
+            $("#cd-new-form").foundation("open");
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+};
+
+/*
+ * 0:新建
+ * 1:修改
+ * 2:删除
+ */
+function changeSubmitText(mode){
+    switch(mode){
+        case 0:
+        $("#edit_form").attr("action","{{url_for('main.machines')}}")
+        $("#confirm").val("新增");
+        break;
+        case 1:
+        $("#edit_form").attr("action","{{url_for('main.machine_update')}}")
+        $("#confirm").val("修改");
+        break;
+    }
+};
+
+function setSelectByValue(eID,val){
+    if(!val){
+        return false;
+    }
+    var ele=document.getElementById(eID);
+    for(var ii=0; ii<ele.length; ii++)
+    if(ele.options[ii].value==val) { //Found!
+        ele.options[ii].selected=true;
+        return true;
+    }
+  return false;
+}
+</script>
 
 {% endblock %}

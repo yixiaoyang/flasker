@@ -6,6 +6,7 @@ from sqlalchemy.ext.declarative import DeclarativeMeta
 from flask_login import LoginManager
 from config import config
 
+from datetime import datetime
 '''
 json串行化
 '''
@@ -17,6 +18,8 @@ class AlchemyEncoder(json.JSONEncoder):
             for field in [f for f in fields if not f.startswith('_') and f not in ['metadata', 'query', 'query_class']]:
                 value = o.__getattribute__(field)
                 try:
+                    if isinstance(value, datetime):
+                        value = value.strftime('%Y-%m-%d %H:%M:%S')
                     json.dumps(value)
                     data[field] = value
                 except TypeError:

@@ -3,7 +3,7 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import Optional
 from wtforms import StringField, PasswordField, BooleanField, DateTimeField
-from wtforms import IntegerField, DateField, SelectField, TextAreaField
+from wtforms import IntegerField, DateField, SelectField, TextAreaField, HiddenField
 
 from wtforms.validators import DataRequired, EqualTo, Email, Length
 from ..models import Product, Machine
@@ -26,17 +26,51 @@ class RegisterForm(FlaskForm):
 class NewMachineForm(FlaskForm):
     title = '新建设备资料'
     # 唯一id
-    serial =  StringField(label='设备编号', validators=[DataRequired(), Length(max=32)])
+    old_id =  HiddenField(label='old_id', validators=[Optional()])
+    id =  StringField(label='设备编号', validators=[DataRequired(), Length(max=32)])
+    status = SelectField(label="状态", default=0, coerce=int,
+        choices= [(i, Machine.statusStr(i)) for i in range(7)])
     hw_version = StringField(label='主板版本号')
+    manufactured_on = DateTimeField(label='出厂日期', format='%Y-%m-%d %H:%M:%S',
+        validators=[Optional()])
     regulate_done = BooleanField(label='是否完成校准', default=False)
     regulate_on = DateTimeField(label='完成校准日期', format='%Y-%m-%d %H:%M:%S',
         validators=[Optional()])
     product_id = SelectField(label='产品类型', coerce=int)
-    license_type = SelectField(label="License类型", default=0, coerce=int,
+    license = SelectField(label="License类型", default=0, coerce=int,
         choices= [(i, Machine.licenseStr(i)) for i in range(3)])
+    company_id = SelectField(label="所在公司", default=0, coerce=int,
+        choices= [], validators=[Optional()])
+
+    tf_capacity = IntegerField(label="TF卡容量(G)", default=8, validators=[Optional()])
+    mouse_keyboard = BooleanField(label="配备鼠标键盘", default=8)
+
+    check_ac_volt = BooleanField(label="检查AC电压",  default=False)
+    check_normal_test = BooleanField(label="检查常规测试",default=False)
+    check_cv = BooleanField(label="检查CV模式",  default=False)
+    check_cr = BooleanField(label="检查CR模式",  default=False)
+    check_hv = BooleanField(label="检查高压测试",default=False)
+
+    def copy_to(self, machine):
+        machine.product_id = self.product_id.data
+        machine.company_id = self.company_id.data
+        machine.status = self.status.data
+        machine.hw_version = self.hw_version.data
+        machine.regulate_done = self.regulate_done.data
+        machine.regulate_on = self.regulate_on.data
+        machine.manufactured_on = self.manufactured_on.data
+        machine.license = self.license.data
+        machine.tf_capacity = self.tf_capacity.data
+        machine.mouse_keyboard = self.mouse_keyboard.data
+        machine.check_ac_volt = self.check_ac_volt.data
+        machine.check_normal_test = self.check_normal_test.data
+        machine.check_cv = self.check_cv.data
+        machine.check_hv = self.check_hv.data
+        machine.check_cr = self.check_cr.data
 
 class NewProductForm(FlaskForm):
     title = '新建产品类型'
+    id = HiddenField(label='id')
     name =  StringField(label='产品名', validators=[DataRequired(), Length(max=128)])
     description = TextAreaField(label='描述')
     status = SelectField(label="研发状态", default=0, coerce=int,

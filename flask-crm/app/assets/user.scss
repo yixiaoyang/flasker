@@ -21,7 +21,7 @@
 }
 
 .form-title{
-    padding: 10px 0px 10px 0px;
+    padding: 0px 0px 30px 0px;
 }
 
 .cxcalendar .settime .time{
@@ -36,4 +36,30 @@ textarea{
 
 textarea{
     min-height: 8rem;
+}
+
+.submit-button-group{
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.submit-button-group .button{
+    margin-right: 5px;
+}
+
+.td_title{
+    background: #EEE;
+    width: 8%;
+    max-width: 120px;
+    text-align: center;
+    font-weight:bold;
+    border:0px solid white;
+}
+
+.td_content{
+    width: 12%;
+}
+
+.td_content_false{
+    color: red;
 }

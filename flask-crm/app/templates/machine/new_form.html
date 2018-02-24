@@ -2,30 +2,69 @@
 <div class="form">
 <h4 class="form-title">新建设备资料</h4>
 {% from "_formhelpers.html" import render_field %}
-<form method="POST" action="/machine/">
+<form  id="edit_form" method="POST" action="/machine/">
     {{ form.csrf_token }}
 
-    {{render_field(form.serial)}}
+    {{form.old_id}}
+    {{render_field(form.id)}}
     {{render_field(form.product_id)}}
+    {{render_field(form.status)}}
+    {{render_field(form.company_id)}}
     {{render_field(form.hw_version)}}
     {{render_field(form.regulate_done)}}
-    {{render_field(form.license_type)}}
-
-
+    {{render_field(form.license)}}
     <div class="form_field_group">
-        <label for="regulate_on">{{ form.regulate_on.label }}</label>
-        <input type="text" readonly="" size="22" name="regulate_on" class="input" id="date">
+        <div class="grid-x grid-padding-x">
+            <div class="small-3 cell">
+                <label for="regulate_on">{{ form.regulate_on.label }}</label>
+            </div>
+            <div class="small-9 cell">
+                <input type="text" readonly="" size="22" name="regulate_on" class="input" id="regulate_on">
+            </div>
+        </div>
     </div>
 
-    <div style="max-width:200px;"> <input value="新建" type="submit" class="button small primary"></div>
+    <div class="form_field_group">
+        <div class="grid-x grid-padding-x">
+            <div class="small-3 cell">
+                <label for="manufactured_on">{{ form.manufactured_on.label }}</label>
+            </div>
+            <div class="small-9 cell">
+                <input type="text" readonly="" size="22" name="manufactured_on" class="input" id="manufactured_on">
+            </div>
+        </div>
+    </div>
+
+    {{render_field(form.tf_capacity)}}
+    {{render_field(form.mouse_keyboard)}}
+
+    {{render_field(form.check_ac_volt)}}
+    {{render_field(form.check_normal_test)}}
+    {{render_field(form.check_cv)}}
+    {{render_field(form.check_cr)}}
+    {{render_field(form.check_hv)}}
+
+
+    <div class="button-group submit-button-group">
+        <input value="新建" id="confirm" type="submit" class="button primary">
+        <a type="cancel" class="button" onclick="close_form()">取消</a>
+    </div>
 </form>
 
 <script type="text/javascript">
-$('#date').cxCalendar({
+$('#regulate_on').cxCalendar({
+  type: 'datetime',
+  format: 'YYYY-MM-DD HH:mm:ss'
+});
+$('#manufactured_on').cxCalendar({
   type: 'datetime',
   format: 'YYYY-MM-DD HH:mm:ss'
 });
 </script>
-
+<script type="text/javascript">
+function close_form(){
+    $("#cd-new-form").foundation("close");
+}
+</script>
 </div>
 {% endblock %}

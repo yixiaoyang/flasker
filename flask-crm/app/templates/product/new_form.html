@@ -6,8 +6,7 @@
     {{render_field(form.name)}}
     {{render_field(form.description)}}
     {{render_field(form.status)}}
-
-    <input id="edit_id" type="hidden" value="-1">
+    <dd>{{ form.id }}</dd>
     <div style="max-width:100px;">
         <input id="confirm" value="新建" type="submit" class="button postfix">
     </div>

@@ -12,26 +12,105 @@
 
 {% if machine: %}
 
-<h3>公司简介</h3>
-<table class="table hover stack">
-    <thead>
-        <tr>
-            <td width="">编号</td>
-            <td width="200">设备型号</td>
-            <td width="80">状态</td>
-            <td width="60"></td>
-       </tr>
-    </thead>
+<h3>设备详情</h3>
+<table class="unstriped">
     <tbody>
-      <tr>
-          <td>{{ machine.id }}</td>
-          <td><a href="{{url_for('main.product_show', id=machine.product_id) if machine.product_id else '#'}}">{{ machine.product.name }}</a></td>
-          <td>{{ machine.licenseStr(machine.license) }}</td>
-          <td>
-          <a href="{{url_for('main.machine_remove',id=machine.id)}}" rel="nofollow">删除</a>
+        <tr>
+          <td class="td_title">编号</td><td class="td_content">{{ machine.id }}</td>
+
+          <td class="td_title">型号</td>
+          <td class="td_content">
+              <a href="{{url_for('main.product_show', id=machine.product_id) if machine.product_id else '#'}}">
+                  {{ machine.product.name }}
+              </a>
           </td>
-     </tr>
+
+          <td class="td_title">License</td>
+          <td class="td_content">{{ machine.licenseStr(machine.license) }}</td>
+
+          <td class="td_title">客户</td>
+          <td  class="td_content">{{ machine.company.name }}</td>
+
+          <td class="td_title">状态</td>
+          <td class="td_content">{{ machine.statusStr(machine.status) }}</td>
+        </tr>
+
+
+        <tr>
+        <td class="td_title">主板版本号</td>
+        <td class="td_content">{{ machine.hw_version }}</td>
+
+        <td class="td_title">TF卡容量(G)</td>
+        <td class="td_content">{{ machine.tf_capacity }}G</td>
+
+        <td class="td_title">出厂日期</td>
+        <td class="td_content">{{ machine.manufactured_on }}</td>
+
+        <td class="td_title">是否完成校准</td>
+        <td class="td_content {{"td_content_true" if machine.regulate_done else "td_content_false"}}">
+            {{ "是" if machine.regulate_done else "否"}}
+        </td>
+
+        <td class="td_title">完成校准日期</td>
+        <td class="td_content">{{ machine.regulate_on }}</td>
+        </tr>
+
+        <tr>
+          <td class="td_title">配备鼠标键盘</td>
+          <td class="td_content {{"td_content_true" if machine.mouse_keyboard else "td_content_false"}}">
+              {{ "是" if machine.mouse_keyboard else "否"}}
+          </td>
+
+          <td class="td_title">检查AC电压</td>
+          <td class="td_content {{"td_content_true" if machine.check_ac_volt else "td_content_false"}}">
+              {{ "是" if machine.check_ac_volt else "否"}}
+          </td>
+
+          <td class="td_title">检查常规测试</td>
+          <td class="td_content {{"td_content_true" if machine.check_normal_test else "td_content_false"}}">
+              {{ "是" if machine.check_normal_test else "否"}}
+          </td>
+
+          <td class="td_title">检查CV模式</td>
+          <td class="td_content {{"td_content_true" if machine.check_cv else "td_content_false"}}">
+              {{ "是" if machine.check_cv else "否"}}
+          </td>
+
+          <td class="td_title">检查CR模式</td>
+          <td class="td_content {{"td_content_true" if machine.check_cr else "td_content_false"}}">
+              {{ "是" if machine.check_cr else "否"}}
+          </td>
+        </tr>
+
+
+        <tr>
+          <td class="td_title">检查高压测试</td>
+          <td class="td_content {{"td_content_true" if machine.check_hv else "td_content_false"}}">
+              {{ "是" if machine.check_hv else "否"}}
+          </td>
+
+          <td class="td_title">检查AC电压</td>
+          <td class="td_content {{"td_content_true" if machine.check_ac_volt else "td_content_false"}}">
+              {{ "是" if machine.check_ac_volt else "否"}}
+          </td>
+
+          <td class="td_title">检查常规测试</td>
+          <td class="td_content {{"td_content_true" if machine.check_normal_test else "td_content_false"}}">
+              {{ "是" if machine.check_normal_test else "否"}}
+          </td>
+
+          <td class="td_title">检查CV模式</td>
+          <td class="td_content {{"td_content_true" if machine.check_cv else "td_content_false"}}">
+              {{ "是" if machine.check_cv else "否"}}
+          </td>
+        </tr>
     </tbody>
+
+    </tr>
+      <td>
+      <a href="{{url_for('main.machine_remove',id=machine.id)}}" rel="nofollow">删除</a>
+      </td>
+    </tr>
 </table>
 
 {% endif %}

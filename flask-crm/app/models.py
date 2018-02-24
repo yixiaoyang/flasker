@@ -88,6 +88,10 @@ class Company(db.Model):
 
     # Company有多个Customer（联系人）
     employees = db.relationship('Customer', backref='my_company')
+
+    # 客户公司拥有的机器
+    machines = db.relationship('Machine', backref='company')
+
     def __repr__(self):
         return '<Company %r %r>' % (self.id, self.name)
 
@@ -133,12 +137,15 @@ class Product(db.Model):
 
     @staticmethod
     def statusStr(val):
+        if not val:
+            return ""
         choices=['未规划','规划中','研发中','完成研发']
         if val > len(choices):
             return ""
         return choices[val]
 
-    def __json__(self):
+    @staticmethod
+    def __json__():
         return ['id', 'name', 'status', 'description']
 
 '''
@@ -161,7 +168,23 @@ class Machine(db.Model):
     # 外键到销售记录条目
     sell_record_id = db.Column(db.Integer, db.ForeignKey('sell_records.id'), index=True, default=0)
 
+    # 外键到出货公司
+    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
+
     issues = db.relationship('Issue', backref='machine')
+
+    '''
+    基本信息
+    '''
+    # 设备状态
+    # 0：空闲
+    # 1：校准中
+    # 2：试用中
+    # 3：已出货（半款）
+    # 4：已出货（全款）
+    # 5：返修中
+    # 6：已回收
+    status = db.Column(db.Integer, default=0)
 
     '''
     机器配置
@@ -206,12 +229,42 @@ class Machine(db.Model):
         self.id = id
 
     @staticmethod
+    def __json__():
+        return ['id', 'status', 'hw_version', 'manufactured_on',
+        'regulate_done', 'regulate_on', 'product_id', 'license',
+        'tf_capacity', 'mouse_keyboard', 'check_ac_volt', 'check_normal_test',
+        'check_cv', 'check_cr', 'check_hv']
+
+    @staticmethod
     def licenseStr(val):
         choices=['试用版','企业版','内部样机']
         if val >= len(choices):
             return ""
         return choices[val]
 
+    @staticmethod
+    def statusStr(val):
+        if not val:
+            return ""
+        strs = [
+            # 0:
+            "空闲",
+            # 1：
+            "校准中",
+            # 2：
+            "试用中",
+            # 3：
+            "已半款",
+            # 4：
+            "已结清",
+            # 5：
+            "返修中",
+            # 6：
+            "已回收"
+        ]
+        if val > len(strs):
+            return ""
+        return strs[val]
 
 '''
 issue和machine是一对一关系
