@@ -15,15 +15,17 @@
 <table class="table hover stack">
     <thead>
         <tr>
-          <td width="300" class="">公司名</td>
-          <td width="" class="">公司地址</td>
-          <td width="60" class=""></td>
+            <td width="220">公司名称</td>
+            <td width="300">地址</td>
+            <td>简介</td>
+            <td width="100"></td>
        </tr>
     </thead>
     <tbody>
       <tr>
         <td>{{ company.name }}</td>
         <td>{{ company.address }}</td>
+        <td>{{ company.business }}</td>
         <td>
         <a href="{{url_for('main.company_remove',id=company.id)}}" rel="nofollow">删除</a>
         </td>

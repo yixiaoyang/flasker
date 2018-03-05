@@ -1,9 +1,7 @@
 #-*- coding:utf-8 -*-
 
 import os
-
-from app import create_app, db
-from app.models import User,Todo
+import sys
 
 from flask import url_for
 from flask_script import Manager,Shell
@@ -14,7 +12,9 @@ from flask_scss import Scss
 import logging
 from logging.handlers import RotatingFileHandler
 
-import sys
+from flask_ckeditor import CKEditor
+
+from app import create_app, db
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -29,6 +29,7 @@ app.logger.addHandler(log_handler)
 # initialization for componet
 manager = Manager(app)
 migreate = Migrate(app,db)
+#ckeditor = CKEditor(app)
 Scss(app)
 
 def make_shell_context():

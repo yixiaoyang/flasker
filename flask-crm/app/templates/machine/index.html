@@ -12,7 +12,7 @@
 <div class="button-group">
   <a class="button small" data-toggle="cd-new-form" onclick="changeSubmitText(0)">新建设备资料</a>
 </div>
-<div id="cd-new-form" class="reveal" title="新建设备资料" data-reveal data-overlay="false" data-close-on-click="false">
+<div id="cd-new-form" class="reveal large" title="新建设备资料" data-reveal data-overlay="false" data-close-on-click="false">
     <button class="close-button" data-close aria-label="Close reveal" type="button">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -24,9 +24,10 @@
         <tr>
             <td width="150">编号</td>
             <td width="150">产品型号</td>
-            <td width="">客户</td>
+            <td width="400">客户</td>
             <td width="80">License</td>
             <td width="80">状态</td>
+            <td width="">备注</td>
             <td width="80">编辑</td>
        </tr>
     </thead>
@@ -35,9 +36,14 @@
         <tr>
             <td><a href="{{url_for('main.machine_show', id=t.id)}}">{{ t.id }}</a></td>
             <td><a href="{{url_for('main.product_show', id=t.product_id) if t.product_id else '#'}}">{{ t.product.name }}</a></td>
-            <td width="">{{t.company.name}}</td>
+            <td width="">
+                <a href="{{url_for('main.company_show',id=t.company.id)}}">
+                    {{ t.company.name }}
+                </a>
+            </td>
             <td>{{ t.licenseStr(t.license) }}</td>
-            <td width="80">{{ t.statusStr(t.status) }}</td>
+            <td>{{ t.statusStr(t.status) }}</td>
+            <td>{{ t.description }}</td>
             <td>
             <a href="{{url_for('main.machine_remove',id=t.id)}}" rel="nofollow">删除</a>
             <a id="modify_button" onclick="callAction('modify','{{t.id}}')" rel="nofollow">修改</a>
@@ -48,7 +54,6 @@
 </table>
 
 <p>计数: {{ machines_count }}</p>
-<p><textarea name="txtmessage" id="txtmessage" cols="80" rows="10"></textarea></p>
 
 <script type="text/javascript">
 function callAction(action,id){
@@ -70,16 +75,26 @@ function callAction(action,id){
             console.log("ajax success:");
             console.log(data);
 
-            $("#txtmessage").text(JSON.stringify(data));
             changeSubmitText(1);
 
             $("#id").val(data.id);
             $("#old_id").val(data.id);
             setSelectByValue("product_id",data.product_id);
             setSelectByValue("status",data.status);
+            setSelectByValue("license",data.license);
+            setSelectByValue("company_id",data.company_id);
+            if(data.license == 0){
+                $('#license_to_div').show();
+                $("#license_to").val(data.license_to);
+            }else{
+                $('#license_to_div').hide();
+            }
             $("#hw_version").val(data.hw_version);
             $("#regulate_done").prop("checked", data.regulate_done);
             $("#date").val(data.date);
+            $("#description").val(data.description);
+            $("#ac_version").val(data.ac_version);
+            $("#dc_version").val(data.dc_version);
             $("#regulate_on").val(data.regulate_on);
             $("#manufactured_on").val(data.manufactured_on);
             $("#tf_capacity").val(data.tf_capacity);

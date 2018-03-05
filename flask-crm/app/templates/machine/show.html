@@ -12,7 +12,7 @@
 
 {% if machine: %}
 
-<h3>设备详情</h3>
+<h3>设备详情 （{{machine.id}}）</h3>
 <table class="unstriped">
     <tbody>
         <tr>
@@ -25,11 +25,12 @@
               </a>
           </td>
 
-          <td class="td_title">License</td>
-          <td class="td_content">{{ machine.licenseStr(machine.license) }}</td>
-
           <td class="td_title">客户</td>
-          <td  class="td_content">{{ machine.company.name }}</td>
+          <td  class="td_content">
+                <a href="{{url_for('main.company_show',id=machine.company.id)}}">
+                    {{ machine.company.name }}
+                </a>
+          </td>
 
           <td class="td_title">状态</td>
           <td class="td_content">{{ machine.statusStr(machine.status) }}</td>
@@ -37,40 +38,58 @@
 
 
         <tr>
-        <td class="td_title">主板版本号</td>
-        <td class="td_content">{{ machine.hw_version }}</td>
+            <td class="td_title">主板版本号</td>
+            <td class="td_content">{{ machine.hw_version }}</td>
 
-        <td class="td_title">TF卡容量(G)</td>
-        <td class="td_content">{{ machine.tf_capacity }}G</td>
+            <td class="td_title">AC版本号</td>
+            <td class="td_content">{{ machine.ac_version }}</td>
 
-        <td class="td_title">出厂日期</td>
-        <td class="td_content">{{ machine.manufactured_on }}</td>
+            <td class="td_title">DC版本号</td>
+            <td class="td_content">{{ machine.dc_version }}</td>
 
-        <td class="td_title">是否完成校准</td>
-        <td class="td_content {{"td_content_true" if machine.regulate_done else "td_content_false"}}">
-            {{ "是" if machine.regulate_done else "否"}}
-        </td>
 
-        <td class="td_title">完成校准日期</td>
-        <td class="td_content">{{ machine.regulate_on }}</td>
+            <td class="td_title">出厂日期</td>
+            <td class="td_content">{{ machine.manufactured_on }}</td>
         </tr>
 
         <tr>
-          <td class="td_title">配备鼠标键盘</td>
-          <td class="td_content {{"td_content_true" if machine.mouse_keyboard else "td_content_false"}}">
-              {{ "是" if machine.mouse_keyboard else "否"}}
-          </td>
+            <td class="td_title">License</td>
+            <td class="td_content">{{ machine.licenseStr(machine.license) }}</td>
 
-          <td class="td_title">检查AC电压</td>
-          <td class="td_content {{"td_content_true" if machine.check_ac_volt else "td_content_false"}}">
+            <td class="td_title">License期限</td>
+            <td class="td_content">{{ machine.license_to }}</td>
+
+            <td class="td_title">是否完成校准</td>
+            <td class="td_content {{"td_content_true" if machine.regulate_done else "td_content_false"}}">
+                {{ "是" if machine.regulate_done else "否"}}
+            </td>
+
+            <td class="td_title">完成校准日期</td>
+            <td class="td_content">{{ machine.regulate_on }}</td>
+        </tr>
+
+        <tr>
+            <td class="td_title">TF卡容量(G)</td>
+            <td class="td_content">{{ machine.tf_capacity }}G</td>
+
+            <td class="td_title">配备鼠标键盘</td>
+            <td class="td_content {{"td_content_true" if machine.mouse_keyboard else "td_content_false"}}">
+                {{ "是" if machine.mouse_keyboard else "否"}}
+            </td>
+
+            <td class="td_title">检查AC电压</td>
+            <td class="td_content {{"td_content_true" if machine.check_ac_volt else "td_content_false"}}">
               {{ "是" if machine.check_ac_volt else "否"}}
-          </td>
+            </td>
 
-          <td class="td_title">检查常规测试</td>
-          <td class="td_content {{"td_content_true" if machine.check_normal_test else "td_content_false"}}">
+            <td class="td_title">检查常规测试</td>
+            <td class="td_content {{"td_content_true" if machine.check_normal_test else "td_content_false"}}">
               {{ "是" if machine.check_normal_test else "否"}}
-          </td>
+            </td>
 
+        </tr>
+
+        <tr>
           <td class="td_title">检查CV模式</td>
           <td class="td_content {{"td_content_true" if machine.check_cv else "td_content_false"}}">
               {{ "是" if machine.check_cv else "否"}}
@@ -80,37 +99,28 @@
           <td class="td_content {{"td_content_true" if machine.check_cr else "td_content_false"}}">
               {{ "是" if machine.check_cr else "否"}}
           </td>
-        </tr>
 
-
-        <tr>
           <td class="td_title">检查高压测试</td>
           <td class="td_content {{"td_content_true" if machine.check_hv else "td_content_false"}}">
               {{ "是" if machine.check_hv else "否"}}
           </td>
 
-          <td class="td_title">检查AC电压</td>
-          <td class="td_content {{"td_content_true" if machine.check_ac_volt else "td_content_false"}}">
-              {{ "是" if machine.check_ac_volt else "否"}}
-          </td>
+          <td class="td_title"></td>
+          <td class="td_content"></td>
+        </tr>
 
-          <td class="td_title">检查常规测试</td>
-          <td class="td_content {{"td_content_true" if machine.check_normal_test else "td_content_false"}}">
-              {{ "是" if machine.check_normal_test else "否"}}
-          </td>
+        <tr>
+        <td class="td_title">备注</td>
+        <td class="td_content" colspan="7">{{ machine.description }} </td>
+        </tr>
 
-          <td class="td_title">检查CV模式</td>
-          <td class="td_content {{"td_content_true" if machine.check_cv else "td_content_false"}}">
-              {{ "是" if machine.check_cv else "否"}}
+        <tr>
+          <td colspan="8">
+          <a href="{{url_for('main.machine_remove',id=machine.id)}}" rel="nofollow">删除</a>
           </td>
         </tr>
-    </tbody>
 
-    </tr>
-      <td>
-      <a href="{{url_for('main.machine_remove',id=machine.id)}}" rel="nofollow">删除</a>
-      </td>
-    </tr>
+    </tbody>
 </table>
 
 {% endif %}

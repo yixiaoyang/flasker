@@ -1,18 +1,36 @@
 {% block NewMachineForm %}
-<div class="form">
+<div class="form" style="max-height:720px;">
 <h4 class="form-title">新建设备资料</h4>
-{% from "_formhelpers.html" import render_field %}
+<div class="row medium-unstack">
+{% from "_formhelpers.html" import render_field, render_field_2cols %}
 <form  id="edit_form" method="POST" action="/machine/">
     {{ form.csrf_token }}
-
+    <div class="grid-x form_2cols">
     {{form.old_id}}
-    {{render_field(form.id)}}
-    {{render_field(form.product_id)}}
-    {{render_field(form.status)}}
-    {{render_field(form.company_id)}}
-    {{render_field(form.hw_version)}}
-    {{render_field(form.regulate_done)}}
-    {{render_field(form.license)}}
+    {{render_field_2cols(form.id)}}
+    {{render_field_2cols(form.product_id)}}
+    {{render_field_2cols(form.status)}}
+    {{render_field_2cols(form.company_id)}}
+    {{render_field_2cols(form.hw_version)}}
+    {{render_field_2cols(form.ac_version)}}
+    {{render_field_2cols(form.dc_version)}}
+    {{render_field_2cols(form.regulate_done)}}
+    {{render_field_2cols(form.license)}}
+
+    <div class ="cell small-6">
+    <div class="form_field_group" id="license_to_div">
+        <div class="grid-x grid-padding-x">
+            <div class="small-3 cell">
+                <label for="license_to">{{ form.license_to.label }}</label>
+            </div>
+            <div class="small-9 cell">
+                <input type="text" readonly="" size="22" name="license_to" class="input" id="license_to">
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class ="cell small-6">
     <div class="form_field_group">
         <div class="grid-x grid-padding-x">
             <div class="small-3 cell">
@@ -23,7 +41,9 @@
             </div>
         </div>
     </div>
+    </div>
 
+    <div class ="cell small-6">
     <div class="form_field_group">
         <div class="grid-x grid-padding-x">
             <div class="small-3 cell">
@@ -34,23 +54,35 @@
             </div>
         </div>
     </div>
+    </div>
 
-    {{render_field(form.tf_capacity)}}
-    {{render_field(form.mouse_keyboard)}}
+    {{render_field_2cols(form.tf_capacity)}}
+    {{render_field_2cols(form.mouse_keyboard)}}
 
-    {{render_field(form.check_ac_volt)}}
-    {{render_field(form.check_normal_test)}}
-    {{render_field(form.check_cv)}}
-    {{render_field(form.check_cr)}}
-    {{render_field(form.check_hv)}}
+    {{render_field_2cols(form.check_ac_volt)}}
+    {{render_field_2cols(form.check_normal_test)}}
+    {{render_field_2cols(form.check_cv)}}
+    {{render_field_2cols(form.check_cr)}}
+    {{render_field_2cols(form.check_hv)}}
 
+    <div class ="cell small-12">
+    <div class="grid-x grid-padding-x ">
+      <div class="cell" style="width:12.5%">
+        {{ form.description.label }}
+      </div>
+      <div class="cell" style="width:87.5%">
+          <dd>{{ form.description }}</dd>
+      </div>
+    </div>
+    </div>
 
+    </div>
     <div class="button-group submit-button-group">
         <input value="新建" id="confirm" type="submit" class="button primary">
         <a type="cancel" class="button" onclick="close_form()">取消</a>
     </div>
 </form>
-
+</div>
 <script type="text/javascript">
 $('#regulate_on').cxCalendar({
   type: 'datetime',
@@ -60,6 +92,21 @@ $('#manufactured_on').cxCalendar({
   type: 'datetime',
   format: 'YYYY-MM-DD HH:mm:ss'
 });
+$('#license_to').cxCalendar({
+  type: 'datetime',
+  format: 'YYYY-MM-DD HH:mm:ss'
+});
+
+$('#license').on('change', function()
+{
+    if(this.value == 0){
+        $('#license_to_div').show();
+    }else{
+        $('#license_to_div').hide();
+    }
+    console.log(value);
+});
+
 </script>
 <script type="text/javascript">
 function close_form(){

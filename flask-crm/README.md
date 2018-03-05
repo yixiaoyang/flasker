@@ -31,3 +31,41 @@ if __name__ == '__main__':
 
 1. 使用 'login_required'装饰器
 2. 定义'login_manager.login_view'到自定义视图
+
+
+### 部署
+
+#### wsgi
+```
+#-*- coding:utf-8 -*-
+
+import sys
+sys.path.insert(0, "/usr/share/webapps/flask/crm")
+from crm.app import create_app
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+app = create_app('default')
+
+if __name__ == '__main__':
+    app.run()
+```
+
+#### systemd
+
+```
+yixiaoyang@[/usr/share/webapps/flask/systemd] % sudo cp ./gunicorn-flask.service /usr/lib/systemd/system/
+```
+
+#### nginx
+```
+server{
+  listen 5002;
+  #listen 5001;
+  #server_name leon.org;
+  location /{
+         proxy_pass http://127.0.0.1:5001;
+  }
+}
+```

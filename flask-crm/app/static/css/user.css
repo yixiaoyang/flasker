@@ -22,29 +22,44 @@
           .cxcalendar .settime .time {
             display: inline-flex; }
 
-            select, [type="checkbox"], textarea {
-              margin: 0 0 1rem; }
+            textarea {
+              min-height: 8rem; }
 
-              textarea {
-                min-height: 8rem; }
+              [type="color"], [type="date"], [type="datetime-local"], [type="datetime"],
+              [type="email"], [type="month"], [type="number"], [type="password"],
+              [type="search"], [type="tel"], [type="text"], [type="time"], [type="url"],
+              [type="week"], [type="checkbox"], select, textarea {
+                margin: 0 0 5px; }
 
-                .submit-button-group {
-                  margin-top: 10px;
-                  margin-left: 10px; }
+                [type="checkbox"] {
+                  margin: 0 0 0px;
+                  margin-top: 5px; }
 
-                  .submit-button-group .button {
-                    margin-right: 5px; }
+                  .submit-button-group {
+                    margin-top: 10px;
+                    margin-left: 10px; }
 
-                    .td_title {
-                      background: #EEE;
-                      width: 8%;
-                      max-width: 120px;
-                      text-align: center;
-                      font-weight: bold;
-                      border: 0px solid white; }
+                    .submit-button-group .button {
+                      margin-right: 5px; }
 
-                      .td_content {
-                        width: 12%; }
+                      .td_title {
+                        background: #EEE;
+                        width: 8%;
+                        max-width: 120px;
+                        text-align: center;
+                        font-weight: bold;
+                        border: 1px solid #ddd; }
 
-                        .td_content_false {
-                          color: red; }
+                        .td_content {
+                          width: 12%;
+                          border: 1px solid #ddd; }
+
+                          .td_content_false {
+                            color: red; }
+
+                            .reveal-large {
+                              width: 600px; }
+
+                              .form_2cols .cell {
+                                padding-left: 8px;
+                                padding-right: 8px; }

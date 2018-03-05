@@ -1,11 +1,12 @@
 #-*- coding:utf-8 -*-
 
-from app import db
+from . import db
+from . import login_manager
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from . import login_manager
 
 from datetime import datetime
 
@@ -95,6 +96,10 @@ class Company(db.Model):
     def __repr__(self):
         return '<Company %r %r>' % (self.id, self.name)
 
+    @staticmethod
+    def __json__():
+        return ['id', 'name', 'address', 'business']
+
 '''
 客户信息类
 '''
@@ -137,7 +142,7 @@ class Product(db.Model):
 
     @staticmethod
     def statusStr(val):
-        if not val:
+        if val is None:
             return ""
         choices=['未规划','规划中','研发中','完成研发']
         if val > len(choices):
@@ -185,6 +190,7 @@ class Machine(db.Model):
     # 5：返修中
     # 6：已回收
     status = db.Column(db.Integer, default=0)
+    description = db.Column(db.Text())
 
     '''
     机器配置
@@ -198,7 +204,7 @@ class Machine(db.Model):
     dc_version = db.Column(db.String(64))
     # 组装出厂时间
     manufactured_on = db.Column('manufactured_on' , db.DateTime)
-    # license类型， 0:试用版，1:企业版
+    # license类型， 0:试用版，1:企业版，2：内部样机
     license = db.Column(db.Integer, default=0)
     # 软件版本期限
     license_to = db.Column('license_to' , db.DateTime)
@@ -230,13 +236,16 @@ class Machine(db.Model):
 
     @staticmethod
     def __json__():
-        return ['id', 'status', 'hw_version', 'manufactured_on',
+        return ['id', 'company_id', 'status', 'hw_version', 'manufactured_on',
         'regulate_done', 'regulate_on', 'product_id', 'license',
         'tf_capacity', 'mouse_keyboard', 'check_ac_volt', 'check_normal_test',
-        'check_cv', 'check_cr', 'check_hv']
+        'check_cv', 'check_cr', 'check_hv', 'license_to', 'description',
+        'dc_version','ac_version']
 
     @staticmethod
     def licenseStr(val):
+        if val is None:
+            return ""
         choices=['试用版','企业版','内部样机']
         if val >= len(choices):
             return ""
@@ -244,7 +253,7 @@ class Machine(db.Model):
 
     @staticmethod
     def statusStr(val):
-        if not val:
+        if val is None:
             return ""
         strs = [
             # 0:

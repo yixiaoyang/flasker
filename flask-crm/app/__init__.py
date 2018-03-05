@@ -4,7 +4,7 @@ from flask import Flask, render_template, json
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from flask_login import LoginManager
-from config import config
+from .config import configs
 
 from datetime import datetime
 '''
@@ -37,8 +37,8 @@ login_manager.login_message_category = "error"
 
 def create_app(config_name):
     app = Flask(__name__)
-    app.config.from_object(config[config_name])
-    config[config_name].init_app(app)
+    app.config.from_object(configs[config_name])
+    configs[config_name].init_app(app)
 
     app.json_encoder = AlchemyEncoder
 

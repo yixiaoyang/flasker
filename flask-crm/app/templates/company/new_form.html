@@ -1,9 +1,20 @@
 <div class="form">
 <h4 class="form-title">新建公司资料</h4>
-<form method="POST" action="/company/">
-    <div class="col_input"><input type="text" name="name" placeholder="公司名称"></div>
-    <div class="col_input"><input type="text" name="address" placeholder="地址"></div>
-    <div class="col_input"><input type="text" name="business" placeholder="简介"></div>
-    <div style="max-width:200px;"> <input value="新建" type="submit" class="button postfix"></div>
+{% from "_formhelpers.html" import render_field %}
+<form method="POST" id="edit_form" action="/company/">
+    {{form.id}}
+    {{render_field(form.name)}}
+    {{render_field(form.address)}}
+    {{render_field(form.business)}}
+    <div style="max-width:200px;">
+        <input id="confirm" value="新建" type="submit" class="button postfix">
+        <a type="cancel" class="button" onclick="close_form()">取消</a>
+    </div>
 </form>
 </div>
+
+<script type="text/javascript">
+function close_form(){
+    $("#cd-new-form").foundation("close");
+}
+</script>

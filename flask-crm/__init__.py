@@ -1,4 +1,4 @@
+#-*- coding:utf-8 -*-
+
 from flask import Flask
-
-
-import models
+from app import models

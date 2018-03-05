@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms.validators import Optional
 from wtforms import StringField, PasswordField, BooleanField, DateTimeField
 from wtforms import IntegerField, DateField, SelectField, TextAreaField, HiddenField
+from flask_ckeditor import CKEditorField
 
 from wtforms.validators import DataRequired, EqualTo, Email, Length
 from ..models import Product, Machine
@@ -31,6 +32,9 @@ class NewMachineForm(FlaskForm):
     status = SelectField(label="状态", default=0, coerce=int,
         choices= [(i, Machine.statusStr(i)) for i in range(7)])
     hw_version = StringField(label='主板版本号')
+    ac_version = StringField(label='FPGA AC版本号')
+    dc_version = StringField(label='FPGA DC版本号')
+    description = TextAreaField(label='备注')
     manufactured_on = DateTimeField(label='出厂日期', format='%Y-%m-%d %H:%M:%S',
         validators=[Optional()])
     regulate_done = BooleanField(label='是否完成校准', default=False)
@@ -39,6 +43,8 @@ class NewMachineForm(FlaskForm):
     product_id = SelectField(label='产品类型', coerce=int)
     license = SelectField(label="License类型", default=0, coerce=int,
         choices= [(i, Machine.licenseStr(i)) for i in range(3)])
+    license_to = DateTimeField(label='License日期', format='%Y-%m-%d %H:%M:%S',
+        validators=[Optional()])
     company_id = SelectField(label="所在公司", default=0, coerce=int,
         choices= [], validators=[Optional()])
 
@@ -56,10 +62,14 @@ class NewMachineForm(FlaskForm):
         machine.company_id = self.company_id.data
         machine.status = self.status.data
         machine.hw_version = self.hw_version.data
+        machine.ac_version = self.ac_version.data
+        machine.dc_version = self.dc_version.data
+        machine.description = self.description.data
         machine.regulate_done = self.regulate_done.data
         machine.regulate_on = self.regulate_on.data
         machine.manufactured_on = self.manufactured_on.data
         machine.license = self.license.data
+        machine.license_to = self.license_to.data
         machine.tf_capacity = self.tf_capacity.data
         machine.mouse_keyboard = self.mouse_keyboard.data
         machine.check_ac_volt = self.check_ac_volt.data
@@ -75,3 +85,11 @@ class NewProductForm(FlaskForm):
     description = TextAreaField(label='描述')
     status = SelectField(label="研发状态", default=0, coerce=int,
         choices= [(i,Product.statusStr(i)) for i in range(4)])
+
+
+class NewCompanyForm(FlaskForm):
+    title = '新建客户公司资料'
+    id = HiddenField(label='id')
+    name =  StringField(label='公司名', validators=[DataRequired(), Length(max=128)])
+    address = StringField(label='地址', validators=[Optional()])
+    business = TextAreaField(label='描述', validators=[Optional()])

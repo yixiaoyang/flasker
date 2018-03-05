@@ -9,10 +9,6 @@
 
 {% block content %}
 
-<script type="text/javascript">
-addCss("{{ url_for('static', filename = 'css/company.css') }}");
-</script>
-
 <div class="button-group">
   <a class="button small" data-toggle="cd-new-form">新建公司资料</a>
 </div>
@@ -26,10 +22,10 @@ addCss("{{ url_for('static', filename = 'css/company.css') }}");
 <table class="table hover stack">
     <thead>
         <tr>
-            <td width="300">公司名称</td>
-            <td>地址</td>
-            <td>经营范围</td>
-            <td width="60"></td>
+            <td width="220">公司名称</td>
+            <td width="300">地址</td>
+            <td>简介</td>
+            <td width="100"></td>
        </tr>
     </thead>
     <tbody>
@@ -40,6 +36,7 @@ addCss("{{ url_for('static', filename = 'css/company.css') }}");
             <td>{{ t.business }}</td>
             <td>
             <a href="{{url_for('main.company_remove',id=t.id)}}" rel="nofollow">删除</a>
+            <a id="modify_button" onclick="callAction('modify','{{t.id}}')" rel="nofollow">修改</a>
             </td>
        </tr>
     {% endfor %}
@@ -47,5 +44,58 @@ addCss("{{ url_for('static', filename = 'css/company.css') }}");
 </table>
 
 <p>计数: {{ companies_count }}</p>
+
+<script type="text/javascript">
+function callAction(action,id){
+    var params = {};
+    params['action'] = action;
+    params['id'] = id;
+    console.log(params);
+    $.ajax({
+        url:"{{url_for('main.company_edit')}}",
+        type: "post",
+        dataType: "json",
+        contentType: "application/json; charset=UTF-8",
+        accepts: {
+            json: 'application/json',
+        },
+        data: JSON.stringify(params),
+
+        success: function(data){
+            console.log("ajax success:");
+            console.log(data);
+
+            changeSubmitText(1);
+            $("#id").val(data.id);
+            $("#name").val(data.name);
+            $("#address").val(data.address);
+            $("#business").val(data.business);
+            $("#cd-new-form").foundation("open");
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+};
+
+/*
+ * 0:新建
+ * 1:修改
+ * 2:删除
+ */
+function changeSubmitText(mode){
+    switch(mode){
+        case 0:
+        $("#edit_form").attr("action","{{url_for('main.companies')}}")
+        $("#confirm").val("新增");
+        break;
+        case 1:
+        $("#edit_form").attr("action","{{url_for('main.company_update')}}")
+        $("#confirm").val("修改");
+        break;
+    }
+};
+
+</script>
 
 {% endblock %}

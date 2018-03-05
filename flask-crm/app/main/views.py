@@ -7,10 +7,9 @@ from flask import flash, abort, jsonify, json
 from ..models import *
 from . import main
 from .. import db
-from run import app
 
 # forms
-from .forms  import LoginForm, RegisterForm, NewMachineForm, NewProductForm
+from .forms  import LoginForm, RegisterForm, NewMachineForm, NewProductForm, NewCompanyForm
 
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_login import login_required
@@ -124,19 +123,21 @@ def register():
 @main.route('/company/', methods=['get','post'])
 @login_required
 def companies():
-    error = None
+    form = NewCompanyForm(request.form)
     if request.method == 'POST':
         company = Company()
-        company.name = request.form['name'] or ''
-        company.address = request.form['address'] or ''
-        company.business = request.form['business'] or ''
+        if form.validate_on_submit():
+            company.name = form.name.data
+            company.address = form.address.data
+            company.business = form.business.data
         db.session.add(company)
         db.session.commit()
         flash('创建成功','success')
         return redirect(url_for('main.companies'))
     companies = Company.query.all()
     companies_count = Company.query.count()
-    return render_template('company/index.html', companies=companies, companies_count=companies_count)
+    return render_template('company/index.html', companies=companies,
+        companies_count=companies_count, form=form)
 
 @main.route('/company/remove/<id>',methods=['get','post','delete'])
 @login_required
@@ -157,6 +158,38 @@ def company_show(id):
     print(company)
     print("name:%s"%company.name)
     return render_template('company/show.html', company=company)
+
+@main.route('/company/edit/',methods=['post'])
+@login_required
+def company_edit():
+    print("get in company_edit")
+    params = request.get_json()
+    if params:
+        id = params['id']
+        if id is None:
+            abort(404)
+        company = Company.query.filter_by(id=id).first()
+        if company is None:
+            abort(404)
+        return json.dumps(company)
+    else:
+        abort(404)
+
+@main.route('/company/update/',methods=['post'])
+@login_required
+def company_update():
+    params = request.form
+    if params:
+        id = params['id']
+        company = Company.query.filter_by(id=id).first()
+        if company is None:
+            abort(404)
+        form = NewCompanyForm(request.form)
+        company.name = form.name.data
+        company.address = form.address.data
+        company.business = form.business.data
+        db.session.commit()
+    return redirect(url_for('main.companies'))
 
 
 #####################################################################
@@ -218,7 +251,6 @@ def customer_new():
         return redirect(url_for('main.customers'))
         #return redirect(url_for('main.customer_show',id=customer.id))
     elif  request.method == 'GET':
-        app.logger.info("customer_new get done")
         companies = Company.query.all()
         logging.debug("all companies count:%d"%len(companies))
         return render_template('customer/new_form.html', companies=companies)
@@ -361,12 +393,10 @@ def sell_record_show(id):
 @login_required
 def sell_record_new():
     error = None
-    app.logger.info("request.method=%s"%request.method)
     if request.method == 'POST':
         sell_record = SellRecord()
         customer_id = request.form['customer'] or ''
         product_id = request.form['product'] or ''
-        app.logger.info("customer.id, product.id=%s/%s"%(customer_id, product_id))
         if customer_id:
             customer = Customer.query.filter_by(id=customer_id).first()
             if customer:
