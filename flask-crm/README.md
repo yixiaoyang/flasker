@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
 1. 使用 'login_required'装饰器
 2. 定义'login_manager.login_view'到自定义视图
-
+3. 使用'Flask-Principal'实现角色管理
 
 ### 部署
 

@@ -106,6 +106,10 @@ def logout():
 
 @main.route('/user/register/', methods=['post','get'])
 def register():
+    flash('内部系统，不允许游客注册，请联系网站管理员')
+    return render_template('index.html')
+
+    '''
     form = RegisterForm(request.form)
     form.title = '注册'
     if form.validate_on_submit():
@@ -115,6 +119,7 @@ def register():
         flash('注册成功，请在邮箱中查找确认链接进行验证')
         return render_template('index.html')
     return render_template("user/register.html",  form=form)
+    '''
 
 
 #####################################################################

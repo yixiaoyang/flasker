@@ -11,6 +11,55 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
 '''
+权限表
+'''
+class Permission:
+    # 基本权限
+    READ = 0x1
+    APPEND = 0x2
+    DELETE = 0x4
+    MODIFY = 0x8
+
+    # 1024
+    ALL = 0x400
+
+    # 操作对象
+    User = 0x1
+    Company = 0x2
+    Customer = 0x3
+    Product = 0x4
+    Machine = 0x5
+    Issue = 0x6
+    IssueRecord = 0x7
+    SellRecord = 0x8
+    ServiceRecord = 0x9
+    VisitRecord = 0xA
+
+    @staticmethod
+    def get(table, operation):
+        return 2048 * operation+table
+class PermissionTable:
+    def __init__(self):
+        ptable = {
+            User.__tablename__: Permission.READ,
+            Company.__tablename__: Permission.READ+Permission.APPEND,
+            Customer.__tablename__: Permission.READ+Permission.APPEND,
+            Product.__tablename__: Permission.READ+Permission.APPEND,
+            Machine.__tablename__: Permission.READ+Permission.APPEND,
+            Issue.__tablename__: Permission.READ+Permission.APPEND,
+            IssueRecord.__tablename__: Permission.READ+Permission.APPEND,
+            SellRecord.__tablename__: Permission.READ+Permission.APPEND,
+            ServiceRecord.__tablename__: Permission.READ+Permission.APPEND,
+            VisitRecord.__tablename__: Permission.READ+Permission.APPEND
+        }
+
+    def toStr():
+        pass
+
+    def fromStr(strs):
+        pass
+
+'''
 UserMixin:  使用Flask-Login继承UserMixin，实现相关接口
 '''
 class User(UserMixin, db.Model):

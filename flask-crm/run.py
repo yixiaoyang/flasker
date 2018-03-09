@@ -8,6 +8,8 @@ from flask_script import Manager,Shell
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 from flask_scss import Scss
+from flask_admin import Admin
+from flask_admin.contrib.sqlamodel import ModelView
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -15,11 +17,29 @@ from logging.handlers import RotatingFileHandler
 from flask_ckeditor import CKEditor
 
 from app import create_app, db
+from app.models import *
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+
+# admin
+admin = Admin(app)
+admin.add_view(ModelView(User, db.session, category="系统"))
+admin.add_view(ModelView(Company, db.session, category="客户"))
+admin.add_view(ModelView(Customer, db.session, category="客户"))
+admin.add_view(ModelView(ProductConfig, db.session, category="产品"))
+admin.add_view(ModelView(Product, db.session, category="产品"))
+admin.add_view(ModelView(Machine, db.session, category="产品"))
+admin.add_view(ModelView(Issue, db.session, category="跟踪"))
+admin.add_view(ModelView(IssueRecord, db.session, category="跟踪"))
+admin.add_view(ModelView(SellRecord, db.session, category="跟踪"))
+admin.add_view(ModelView(ServiceRecord, db.session, category="跟踪"))
+admin.add_view(ModelView(VisitRecord, db.session, category="跟踪"))
+admin.add_view(ModelView(Todo, db.session, category="跟踪"))
+
+
 
 # logging
 log_handler = RotatingFileHandler('run.log', maxBytes=10240, backupCount=1)
