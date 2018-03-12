@@ -3,7 +3,7 @@
 from flask import Flask, render_template, json
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import DeclarativeMeta
-from flask_login import LoginManager
+
 from .config import configs
 
 from datetime import datetime
@@ -29,11 +29,6 @@ class AlchemyEncoder(json.JSONEncoder):
 
 db = SQLAlchemy()
 
-login_manager = LoginManager()
-login_manager.session_protection = 'strong'
-login_manager.login_view = "main.login"
-login_manager.login_message = u'请先登陆CRM系统'
-login_manager.login_message_category = "error"
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -43,14 +38,25 @@ def create_app(config_name):
     app.json_encoder = AlchemyEncoder
 
     db.init_app(app)
-    login_manager.init_app(app)
 
     # routes
 
     # errors
 
-    # blueprint
+    # blueprints
     from main import main as main_blueprint
     app.register_blueprint(main_blueprint)
-    print("register blueprint succeed")
+
+    from admin import blueprint_admin
+    from admin import init_app as blueprint_admin_init_app
+    app.register_blueprint(blueprint_admin)
+    blueprint_admin_init_app(app)
+
+    from principal import blueprint_principal
+    from principal import init_app as blueprint_principal_init_app
+    app.register_blueprint(blueprint_principal)
+    blueprint_principal_init_app(app)
+
+    app.logger.debug("load all blueprint succeed")
+
     return app

@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 
 from . import db
-from . import login_manager
+from principal import login_manager
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import DeclarativeMeta
@@ -54,6 +54,7 @@ class PermissionTable:
         }
 
     def toStr():
+
         pass
 
     def fromStr(strs):
