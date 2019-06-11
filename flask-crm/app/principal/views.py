@@ -3,7 +3,7 @@
 from flask import render_template, session, redirect, url_for, escape, request
 from flask import flash, abort
 from flask import Flask, Response
-from flask.ext.principal import Permission, RoleNeed
+from flask_principal import Permission, RoleNeed
 
 from . import blueprint_principal
 

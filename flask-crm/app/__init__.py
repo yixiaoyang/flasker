@@ -44,16 +44,16 @@ def create_app(config_name):
     # errors
 
     # blueprints
-    from main import main as main_blueprint
+    from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
-    from admin import blueprint_admin
-    from admin import init_app as blueprint_admin_init_app
+    from .admin import blueprint_admin
+    from .admin import init_app as blueprint_admin_init_app
     app.register_blueprint(blueprint_admin)
     blueprint_admin_init_app(app)
 
-    from principal import blueprint_principal
-    from principal import init_app as blueprint_principal_init_app
+    from .principal import blueprint_principal
+    from .principal import init_app as blueprint_principal_init_app
     app.register_blueprint(blueprint_principal)
     blueprint_principal_init_app(app)
 

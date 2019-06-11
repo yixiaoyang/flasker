@@ -17,8 +17,9 @@ from flask_ckeditor import CKEditor
 
 from app import create_app, db
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+if sys.version_info < (3, 0):
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -56,7 +57,7 @@ def list_routes():
         output.append(line)
 
     for line in sorted(output):
-        print line
+        print (line)
 
 if __name__ == '__main__':
 	manager.run()

@@ -34,7 +34,6 @@ def todos():
             todo = Todo(content=content,status=0)
             db.session.add(todo)
             db.session.commit()
-            print todo
             flash('You were successfully inssert new todo','success')
     todos = Todo.query.all()
     todos_count = Todo.query.count()

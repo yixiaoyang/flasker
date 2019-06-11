@@ -4,7 +4,7 @@ from flask import Blueprint
 from flask_admin import Admin
 from flask_admin.contrib.sqlamodel import ModelView
 
-from views import *
+from .views import *
 from ..models import *
 from .. import db
 

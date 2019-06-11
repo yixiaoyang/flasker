@@ -2,7 +2,7 @@
 
 from flask import Blueprint
 from flask_login import LoginManager
-from flask.ext.principal import Principal
+from flask_principal import Principal
 
 blueprint_principal = Blueprint('crm_principal', __name__)
 
@@ -24,4 +24,4 @@ def init_app(app):
 
     app.logger.debug("load login_manager and principals succeed")
 
-from views import *
+from .views import *
