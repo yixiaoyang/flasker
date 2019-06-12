@@ -8,20 +8,31 @@ from flask_script import Manager,Shell
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 from flask_scss import Scss
-
+from flask_ckeditor import CKEditor
+from logging.handlers import RotatingFileHandler
+from celery import Celery
 
 import logging
-from logging.handlers import RotatingFileHandler
-
-from flask_ckeditor import CKEditor
-
 from app import create_app, db
+
+def make_celery(app):
+    celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    
+    class ContextTask(celery.Task):
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery.Task = ContextTask
+    return celery
 
 if sys.version_info < (3, 0):
     reload(sys)
     sys.setdefaultencoding('utf-8')
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+celery = make_celery(app)
 
 # logging
 log_handler = RotatingFileHandler('run.log', maxBytes=10240, backupCount=1)

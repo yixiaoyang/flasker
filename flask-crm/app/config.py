@@ -12,6 +12,10 @@ class Config:
 	FLASK_ADMIN = os.environ.get('FLASK_ADMIN')
 	SECRET_KEY = os.environ.get('SECRET_KEY') or 'Q!W@E#R$'
 
+	# celery
+	CELERY_BROKER_URL = 'http://localhost:5672/0'
+	CELERY_RESULT_BACKEND = 'http://localhost:5672/0'
+
 	@staticmethod
 	def init_app(app):
 		pass
